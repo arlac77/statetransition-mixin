@@ -45,7 +45,7 @@ module.exports.StateTransitionMixin = (superclass, actions, currentState) => cla
     return currentState;
   }
   set state(newState) {
-    if (newState != currentState) {
+    if (newState !== currentState) {
       this.stateChanged(currentState, newState);
       currentState = newState;
     }
@@ -97,7 +97,7 @@ module.exports.defineActionMethods = function (object, actions) {
 
         if (action.transitions[this.state]) {
           const transition = action.transitions[this.state];
-          return this._transitionPromise = this[privateActionName]().then(
+          this._transitionPromise = this[privateActionName]().then(
             resolved => {
               this.state = transition.target;
               this._transitionPromise = undefined;
@@ -109,6 +109,8 @@ module.exports.defineActionMethods = function (object, actions) {
               this._transitionPromise = undefined;
               return Promise.reject(reject);
             });
+
+          return this._transitionPromise;
         } else {
           return this.illegalStateTransition(action);
         }
