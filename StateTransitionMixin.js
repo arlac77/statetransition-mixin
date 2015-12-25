@@ -22,10 +22,6 @@ module.exports.prepareActions = function (as) {
 };
 
 module.exports.StateTransitionMixin = (superclass, actions, currentState) => class extends superclass {
-  constructor(args) {
-    super(args);
-  }
-
   /**
    * Called when state action is not allowed
    * @param {Object} action
@@ -42,18 +38,17 @@ module.exports.StateTransitionMixin = (superclass, actions, currentState) => cla
    * @param {String} newState
    */
   stateChanged(oldState, newState) {
-    this.trace(level => `${this} transitioned from ${oldState} -> ${newState}`);
-  }
-
-  get actions() {
-    return actions;
+    //this.trace(level => `${this} transitioned from ${oldState} -> ${newState}`);
   }
 
   get state() {
     return currentState;
   }
   set state(newState) {
-    currentState = newState;
+    if (newState != currentState) {
+      this.stateChanged(currentState, newState);
+      currentState = newState;
+    }
   }
 };
 
@@ -72,20 +67,25 @@ function rejectUnlessResolvedWithin(promise, timeout) {
   });
 }
 
+function thisResolverPromise() {
+  return Promise.resolve(this);
+}
+
 module.exports.defineActionMethods = function (object, actions) {
   Object.keys(actions).forEach(actionName => {
     const action = actions[actionName];
     const privateActionName = '_' + actionName;
 
-    Object.defineProperty(object, privateActionName, {
-      value: function () {
-        return Promise.resolve(this);
-      }
-    });
+    if (!object.hasOwnProperty(privateActionName)) {
+      Object.defineProperty(object, privateActionName, {
+        value: thisResolverPromise
+      });
+    }
 
     Object.defineProperty(object, actionName, {
       value: function () {
         console.log(`${actionName}`);
+
         /*
         if (this.state === transition.during) {
           return this._transitionPromise;

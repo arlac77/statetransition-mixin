@@ -18,7 +18,7 @@ const actions = stm.prepareActions({
     }
   },
   stop: {
-    stopping: {
+    running: {
       target: "stopped",
       during: "stopping",
       timeout: 5
