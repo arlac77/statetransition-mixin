@@ -13,6 +13,51 @@ for es6 classes to
 ------------------
 
 ```
+const stm = require('statetranstion-mixin');
+
+const actions = stm.prepareActions({
+start: {
+  stopped: {
+    target: "running",
+    during: "starting",
+    timeout: 10
+  }
+},
+stop: {
+  running: {
+    target: "stopped",
+    during: "stopping",
+    timeout: 5
+  },
+  starting: {
+    target: "stopped",
+    during: "stopping",
+    timeout: 10
+  }
+}
+});
+
+class BaseClass {}
+
+class StatefullClass extends stm.StateTransitionMixin(BaseClass, actions, 'stopped') {
+_start() {
+  return new Promise((f, r) => {
+    setTimeout(() => {
+      f(this)
+    }, 10);
+  });
+}
+}
+
+stm.defineActionMethods(StatefullClass.prototype, actions);
+
+myObject = new StatefullClass();
+
+myObject.start().then( (o) => console.log('started == ${o.state}'));
+console.log('starting == ${myObject.state}');
+
+myObject.stop().then( (o) => console.log('stopped == ${o.state}'));
+console.log('stopping == ${myObject.state}');
 
 ```
 

@@ -72,6 +72,8 @@ function thisResolverPromise() {
 }
 
 module.exports.defineActionMethods = function (object, actions) {
+  console.log(`${JSON.stringify(actions,undefined,1)}`);
+
   Object.keys(actions).forEach(actionName => {
     const action = actions[actionName];
     const privateActionName = '_' + actionName;
@@ -84,29 +86,30 @@ module.exports.defineActionMethods = function (object, actions) {
 
     Object.defineProperty(object, actionName, {
       value: function () {
-        console.log(`${actionName}`);
-
-        /*
-        if (this.state === transition.during) {
-          return this._transitionPromise;
+        if (this._transition) {
+          if (this.state === this._transition.during) {
+            return this._transitionPromise;
+          }
+          if (this.state === this._transition.target) {
+            return Promise.resolve(this);
+          }
         }
-        if (this.state === transition.target) {
-          return Promise.resolve(this);
-        }*/
-
-
         if (action.transitions[this.state]) {
-          const transition = action.transitions[this.state];
+          this._transition = action.transitions[this.state];
+          this.state = this._transition.during;
+
           this._transitionPromise = this[privateActionName]().then(
             resolved => {
-              this.state = transition.target;
+              this.state = this._transition.target;
               this._transitionPromise = undefined;
+              this._transition = undefined;
               return this;
             }, rejected => {
-              this.error(level => `Executing ${transition.name} transition leads to ${rejected}`);
+              this.error(level => `Executing ${this._transition.name} transition leads to ${rejected}`);
 
               this.state = 'failed';
               this._transitionPromise = undefined;
+              this._transition = undefined;
               return Promise.reject(reject);
             });
 

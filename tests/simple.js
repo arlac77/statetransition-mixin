@@ -59,10 +59,39 @@ describe('states', function () {
     }, done);
   });
 
-  it('can be stopped', function (done) {
+  it('and stoped', function (done) {
     o1.stop().then(() => {
       assert.equal(o1.state, 'stopped');
       done();
     }, done);
   });
+
+  it('can be started while starting', function (done) {
+    assert.equal(o1.state, 'stopped');
+
+    o1.start().then(() => {});
+
+    assert.equal(o1.state, 'starting');
+
+    o1.start().then(() => {
+      assert.equal(o1.state, 'running');
+      done();
+    }, done).catch(done);
+  });
+
+  xit('can be stopped while starting', function (done) {
+    o1.stop().then(() => {
+      assert.equal(o1.state, 'stopped');
+
+      o1.start().then(() => {});
+
+      assert.equal(o1.state, 'starting');
+
+      o1.stop().then(() => {
+        assert.equal(o1.state, 'stopped');
+        done();
+      }, done).catch(done);
+    });
+  });
+
 });
