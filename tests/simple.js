@@ -33,11 +33,17 @@ const actions = stm.prepareActions({
 
 class BaseClass {}
 
+var shouldReject = false;
+
 class StatefullClass extends stm.StateTransitionMixin(BaseClass, actions, 'stopped') {
   _start() {
     return new Promise((f, r) => {
       setTimeout(() => {
-        f(this)
+        if (shouldReject) {
+          r(new Error("always reject"));
+        } else {
+          f(this);
+        }
       }, 10);
     });
   }
@@ -101,4 +107,14 @@ describe('states', function () {
     });
   });
 
+  it('handle failure while starting', function (done) {
+    o1.stop().then(() => {
+      shouldReject = true;
+      assert.equal(o1.state, 'stopped');
+      o1.start().then(() => {}).catch(e => {
+        assert.equal(o1.state, 'failed');
+        done();
+      });
+    });
+  });
 });

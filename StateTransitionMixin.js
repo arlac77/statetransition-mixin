@@ -32,6 +32,20 @@ module.exports.StateTransitionMixin = (superclass, actions, currentState) => cla
   }
 
   /**
+   * Called when the state transtinio implementation Promise rejects.
+   * Resets the transition
+   * @return {Promise} rejecting promise
+   */
+  stateTransitionRejection(rejected) {
+    //this.error(level => `Executing ${this._transition.name} transition leads to ${rejected}`);
+    this.state = 'failed';
+    this._transitionPromise = undefined;
+    this._transition = undefined;
+
+    return Promise.reject(rejected);
+  }
+
+  /**
    * To be overwritten
    * Called when the state changes
    * @param {String} oldState
@@ -71,6 +85,25 @@ function thisResolverPromise() {
   return Promise.resolve(this);
 }
 
+/**
+ * Defines methods to perfom the state transitions.
+ * States are traversed in the following way:
+ * current -> during -> final
+ * If the step is not in one of the transitions current
+ * states and also not already in the transitions final
+ * state a rejecting promise will be delivered from the
+ * generated function. In the 'during' state a function
+ * named '_' + <transitions name> (sample: '_start()')
+ * will be called first.
+ * It is expected that this function delivers a promise.
+ * Special handling of consequent transitions:
+ * While in a during state the former delivered primise will be
+ * delivered again. This enshures that several consequent
+ * transitions in a row will be fullfiled by the same promise.
+ * There can only be one transition in place at a given point in time.
+ * @param {Object} object where we define the metods
+ * @param {Object} actions object describing the state transitions
+ */
 module.exports.defineActionMethods = function (object, actions) {
   //console.log(`${JSON.stringify(actions,undefined,1)}`);
 
@@ -87,11 +120,11 @@ module.exports.defineActionMethods = function (object, actions) {
     Object.defineProperty(object, actionName, {
       value: function () {
         if (this._transition) {
-          if (this.state === this._transition.during) {
-            return this._transitionPromise;
-          }
-          if (this.state === this._transition.target) {
-            return Promise.resolve(this);
+          switch (this.state) {
+            case this._transition.during:
+              return this._transitionPromise;
+            case this._transition.target:
+              return Promise.resolve(this);
           }
         }
         if (action.transitions[this.state]) {
@@ -104,14 +137,7 @@ module.exports.defineActionMethods = function (object, actions) {
               this._transitionPromise = undefined;
               this._transition = undefined;
               return this;
-            }, rejected => {
-              this.error(level => `Executing ${this._transition.name} transition leads to ${rejected}`);
-
-              this.state = 'failed';
-              this._transitionPromise = undefined;
-              this._transition = undefined;
-              return Promise.reject(reject);
-            });
+            }, rejected => this.stateTransitionRejection(rejected));
 
           return this._transitionPromise;
         } else {
