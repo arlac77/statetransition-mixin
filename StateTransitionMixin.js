@@ -72,7 +72,7 @@ function thisResolverPromise() {
 }
 
 module.exports.defineActionMethods = function (object, actions) {
-  console.log(`${JSON.stringify(actions,undefined,1)}`);
+  //console.log(`${JSON.stringify(actions,undefined,1)}`);
 
   Object.keys(actions).forEach(actionName => {
     const action = actions[actionName];
