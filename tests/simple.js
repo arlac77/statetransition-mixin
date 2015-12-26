@@ -52,6 +52,13 @@ describe('states', function () {
     assert.equal(o1.state, 'stopped');
   });
 
+  it('has action methods', function () {
+    assert.isDefined(o1.stop());
+    assert.isDefined(o1.start());
+    assert.isDefined(o1._start());
+    assert.isDefined(o1._stop());
+  });
+
   it('can be started', function (done) {
     o1.start().then(() => {
       assert.equal(o1.state, 'running');
