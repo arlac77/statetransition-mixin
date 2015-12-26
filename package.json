@@ -26,7 +26,7 @@
     "semantic-release": "6.0.3"
   },
   "keywords": [
-    "loglevel"
+    "state", "mixin"
   ],
   "author": "Markus Felten <markus.felten@gmx.de>",
   "license": "BSD-2-Clause",
