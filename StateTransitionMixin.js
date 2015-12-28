@@ -4,35 +4,68 @@
 
 module.exports.prepareActions = function (as) {
   const actions = {};
+  const states = {};
 
-  Object.keys(as).forEach(name => {
-    const a = as[name];
-    const ts = {};
-    Object.keys(a).forEach(tn => {
-      ts[tn] = a[tn];
-      a[tn].name = tn;
+  function addState(name, transition) {
+    if (!states[name]) {
+      states[name] = {
+        name: name,
+        transitions: {}
+      };
+    }
+
+    if (transition) {
+      states[name].transitions[transition.initial] = transition;
+    }
+
+    return states[name];
+  }
+
+  Object.keys(as).forEach(actionName => {
+    const a = as[actionName];
+    const initialTransitions = {};
+    const duringTransitions = {};
+    Object.keys(a).forEach(initialState => {
+      const t = a[initialState];
+      initialTransitions[initialState] = t;
+      duringTransitions[t.during] = t;
+      t.initial = initialState;
+      t.name = `${actionName}:${t.initial}->${t.target}`;
+      addState(t.initial, t);
+      addState(t.during, t);
+      addState(t.target);
     });
-    actions[name] = {
-      name: name,
-      transitions: ts
+    actions[actionName] = {
+      name: actionName,
+      initial: initialTransitions,
+      during: duringTransitions
     };
   });
 
-  return actions;
+  /*
+    console.log(`${JSON.stringify(actions,undefined,1)}`);
+    console.log(`${JSON.stringify(states,undefined,1)}`);
+  */
+
+  return [actions, states];
 };
 
 module.exports.StateTransitionMixin = (superclass, actions, currentState) => class extends superclass {
-  /**
-   * Called when state action is not allowed
-   * @param {Object} action
-   * @return {Promise} rejecting with an Error
-   */
+  constructor() {
+      super();
+      this._state = currentState;
+    }
+    /**
+     * Called when state transition action is not allowed
+     * @param {Object} action
+     * @return {Promise} rejecting with an Error
+     */
   illegalStateTransition(action) {
     return Promise.reject(new Error(`Can't ${action.name} ${this} in ${this.state} state`));
   }
 
   /**
-   * Called when the state transtinio implementation Promise rejects.
+   * Called when the state transtion implementation promise rejects.
    * Resets the transition
    * @return {Promise} rejecting promise
    */
@@ -56,12 +89,12 @@ module.exports.StateTransitionMixin = (superclass, actions, currentState) => cla
   }
 
   get state() {
-    return currentState;
+    return this._state;
   }
   set state(newState) {
-    if (newState !== currentState) {
-      this.stateChanged(currentState, newState);
-      currentState = newState;
+    if (newState !== this._state) {
+      this.stateChanged(this._state, newState);
+      this._state = newState;
     }
   }
 };
@@ -70,14 +103,22 @@ function rejectUnlessResolvedWithin(promise, timeout) {
   if (timeout === 0) return promise;
 
   return new Promise(function (fullfill, reject) {
-    const p = promise.then((fullfilled, rejected) => {
-      fullfilled(this);
+    const th = setTimeout(() => {
+      //console.log(`Not resolved within ${timeout}ms`);
+      reject(new Error(`Not resolved within ${timeout}ms`))
+    }, timeout);
+
+    return promise.then((fullfilled, rejected) => {
+      //console.log(`AA ${fullfilled} : ${rejected}`);
+      clearTimeout(th);
+
+      if (fullfilled) {
+        fullfill(fullfilled);
+      }
+      if (rejected) {
+        reject(rejected);
+      }
     });
-
-    setTimeout(function () {
-      reject(`Not resolved within ${timeout}s`);
-
-    }, timeout * 1000);
   });
 }
 
@@ -104,8 +145,9 @@ function thisResolverPromise() {
  * @param {Object} object where we define the metods
  * @param {Object} actions object describing the state transitions
  */
-module.exports.defineActionMethods = function (object, actions) {
-  //console.log(`${JSON.stringify(actions,undefined,1)}`);
+module.exports.defineActionMethods = function (object, actionsAndStates) {
+  const actions = actionsAndStates[0];
+  const states = actionsAndStates[1];
 
   Object.keys(actions).forEach(actionName => {
     const action = actions[actionName];
@@ -119,30 +161,32 @@ module.exports.defineActionMethods = function (object, actions) {
 
     Object.defineProperty(object, actionName, {
       value: function () {
-        if (this._transition) {
-          switch (this.state) {
-            case this._transition.during:
-              return this._transitionPromise;
-            case this._transition.target:
-              return Promise.resolve(this);
-          }
-        }
-        if (action.transitions[this.state]) {
-          this._transition = action.transitions[this.state];
+        // normal start
+        if (action.initial[this.state]) {
+          this._transition = action.initial[this.state];
           this.state = this._transition.during;
 
-          this._transitionPromise = this[privateActionName]().then(
-            resolved => {
-              this.state = this._transition.target;
-              this._transitionPromise = undefined;
-              this._transition = undefined;
-              return this;
-            }, rejected => this.stateTransitionRejection(rejected));
+          this._transitionPromise = rejectUnlessResolvedWithin(this[privateActionName](), this._transition
+              .timeout)
+            .then(
+              resolved => {
+                this.state = this._transition.target;
+                this._transitionPromise = undefined;
+                this._transition = undefined;
+
+                return this;
+              }, rejected => this.stateTransitionRejection(rejected));
 
           return this._transitionPromise;
-        } else {
-          return this.illegalStateTransition(action);
+        } else if (this._transition) {
+          if (action.during[this._transition.during]) {
+            //console.log(`XXX ${this.state} ${action.during[this._transition.during]}`);
+
+            return this._transitionPromise;
+          }
         }
+
+        return this.illegalStateTransition(action);
       }
     });
   });

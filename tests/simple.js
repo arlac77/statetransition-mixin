@@ -14,107 +14,131 @@ const actions = stm.prepareActions({
     stopped: {
       target: "running",
       during: "starting",
-      timeout: 10
+      timeout: 200
     }
   },
   stop: {
     running: {
       target: "stopped",
       during: "stopping",
-      timeout: 5
+      timeout: 100
     },
     starting: {
       target: "stopped",
       during: "stopping",
-      timeout: 10
+      timeout: 100
     }
   }
 });
 
 class BaseClass {}
 
-var shouldReject = false;
-
 class StatefullClass extends stm.StateTransitionMixin(BaseClass, actions, 'stopped') {
+  constructor(startTime, shouldReject) {
+    super();
+    this.startTime = startTime;
+    this.shouldReject = shouldReject;
+  }
   _start() {
     return new Promise((f, r) => {
       setTimeout(() => {
-        if (shouldReject) {
+        if (this.shouldReject) {
           r(new Error("always reject"));
         } else {
           f(this);
         }
-      }, 10);
+      }, this.startTime);
     });
+  }
+
+  toString() {
+    return `sample: ${this.state}`
   }
 }
 
 stm.defineActionMethods(StatefullClass.prototype, actions);
 
 describe('states', function () {
-  const o1 = new StatefullClass();
+  describe('static', function () {
+    const o = new StatefullClass(10, false);
 
-  it('has initial state', function () {
-    assert.equal(o1.state, 'stopped');
+    it('has initial state', function () {
+      o.state = 'stopped';
+      assert.equal(o.state, 'stopped');
+    });
+
+    it('has action methods', function () {
+      assert.isDefined(o.stop());
+      assert.isDefined(o.start());
+      assert.isDefined(o._start());
+      assert.isDefined(o._stop());
+    });
   });
 
-  it('has action methods', function () {
-    assert.isDefined(o1.stop());
-    assert.isDefined(o1.start());
-    assert.isDefined(o1._start());
-    assert.isDefined(o1._stop());
-  });
+  describe('start-stop', function () {
+    const o = new StatefullClass(10, false);
 
-  it('can be started', function (done) {
-    o1.start().then(() => {
-      assert.equal(o1.state, 'running');
-      done();
-    }, done);
-  });
+    it('can be started', function (done) {
+      o.start().then(() => {
+        assert.equal(o.state, 'running');
+        done();
+      }, done);
+    });
 
-  it('and stoped', function (done) {
-    o1.stop().then(() => {
-      assert.equal(o1.state, 'stopped');
-      done();
-    }, done);
+    it('and stoped', function (done) {
+      o.stop().then(() => {
+        assert.equal(o.state, 'stopped');
+        done();
+      }, done);
+    });
   });
 
   it('can be started while starting', function (done) {
-    assert.equal(o1.state, 'stopped');
+    const o = new StatefullClass(10, false);
 
-    o1.start().then(() => {});
+    o.start().then(() => {});
 
-    assert.equal(o1.state, 'starting');
+    assert.equal(o.state, 'starting');
 
-    o1.start().then(() => {
-      assert.equal(o1.state, 'running');
+    o.start().then(() => {
+      assert.equal(o.state, 'running');
       done();
     }, done).catch(done);
   });
 
-  xit('can be stopped while starting', function (done) {
-    o1.stop().then(() => {
-      assert.equal(o1.state, 'stopped');
+  it('can be stopped while starting', function (done) {
+    const o = new StatefullClass(100, false);
 
-      o1.start().then(() => {});
+    o.start().then(() => {});
 
-      assert.equal(o1.state, 'starting');
+    assert.equal(o.state, 'starting');
 
-      o1.stop().then(() => {
-        assert.equal(o1.state, 'stopped');
-        done();
-      }, done).catch(done);
-    });
+    o.stop().then(() => {
+      assert.equal(o.state, 'stopped');
+      done();
+    }, done).catch(done);
   });
 
-  it('handle failure while starting', function (done) {
-    o1.stop().then(() => {
-      shouldReject = true;
-      assert.equal(o1.state, 'stopped');
-      o1.start().then(() => {}).catch(e => {
-        assert.equal(o1.state, 'failed');
+  describe('failures', function () {
+    it('handle timeout while starting', function (done) {
+      const o = new StatefullClass(1000, false);
+      o.start().then(() => {}).catch(e => {
+        assert.equal(o.state, 'failed');
+        done();
+      });
+    });
+
+    it('handle failure while starting', function (done) {
+      const o = new StatefullClass(10, true);
+
+      o.start().then((f, r) => {
+        console.log(`${f} ${r}`);
+      }).catch(e => {
+        //console.log(`catch: ${e}`);
+        assert.equal(o.state, 'failed');
         done();
       });
     });
   });
+
 });
