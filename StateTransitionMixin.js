@@ -25,6 +25,8 @@ module.exports.prepareActions = function (as) {
     const a = as[actionName];
     const initialTransitions = {};
     const duringTransitions = {};
+    let target;
+
     Object.keys(a).forEach(initialState => {
       const t = a[initialState];
       initialTransitions[initialState] = t;
@@ -34,11 +36,13 @@ module.exports.prepareActions = function (as) {
       addState(t.initial, t);
       addState(t.during, t);
       addState(t.target);
+      target = t.target;
     });
     actions[actionName] = {
       name: actionName,
       initial: initialTransitions,
-      during: duringTransitions
+      during: duringTransitions,
+      target: target
     };
   });
 
@@ -216,7 +220,13 @@ module.exports.defineActionMethods = function (object, actionsAndStates) {
 
     Object.defineProperty(object, actionName, {
       value: function () {
-        // normal start
+
+        // target state already reached
+        if (this.state === action.target) {
+          return Promise.resolve(this);
+        }
+
+        // normal start we are in the initial state of the action
         if (action.initial[this.state]) {
           this._transition = action.initial[this.state];
           this.state = this._transition.during;

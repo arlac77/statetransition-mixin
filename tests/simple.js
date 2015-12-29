@@ -85,6 +85,13 @@ describe('states', function () {
       }, done);
     });
 
+    it('can be started while running', function (done) {
+      o.start().then(() => {
+        assert.equal(o.state, 'running');
+        done();
+      }, done);
+    });
+
     it('and stoped', function (done) {
       o.stop().then(() => {
         assert.equal(o.state, 'stopped');
