@@ -50,6 +50,61 @@ module.exports.prepareActions = function (as) {
   return [actions, states];
 };
 
+const _Base = {
+  /**
+   * Called when state transition action is not allowed
+   * @param {Object} action
+   * @return {Promise} rejecting with an Error
+   */
+  illegalStateTransition(action) {
+      return Promise.reject(new Error(`Can't ${action.name} ${this} in ${this.state} state`));
+    },
+
+    /**
+     * Called when the state transtion implementation promise rejects.
+     * Resets the transition
+     * @return {Promise} rejecting promise
+     */
+    stateTransitionRejection(rejected) {
+      //this.error(level => `Executing ${this._transition.name} transition leads to ${rejected}`);
+      this.state = 'failed';
+      this._transitionPromise = undefined;
+      this._transition = undefined;
+
+      return Promise.reject(rejected);
+    },
+
+    /**
+     * To be overwritten
+     * Called when the state changes
+     * @param {String} oldState
+     * @param {String} newState
+     */
+    stateChanged(oldState, newState) {
+      //this.trace(level => `${this} transitioned from ${oldState} -> ${newState}`);
+    }
+};
+
+exports.defineStateTransitionProperties = function (object, actions, currentState) {
+
+  const properties = {};
+
+  properties.state = {
+    get: function () {
+      return currentState;
+    },
+    set: function (newState) {
+      if (newState !== currentState) {
+        this.stateChanged(currentState, newState);
+        currentState = newState;
+      }
+    }
+  };
+
+  Object.assign(object, Base);
+  Object.defineProperties(object, properties);
+};
+
 module.exports.StateTransitionMixin = (superclass, actions, currentState) => class extends superclass {
   constructor() {
       super();
@@ -98,6 +153,10 @@ module.exports.StateTransitionMixin = (superclass, actions, currentState) => cla
     }
   }
 };
+
+console.log(
+  `KEYS: ${Object.getOwnPropertyNames(module.exports.StateTransitionMixin)} ${module.exports.StateTransitionMixin}`
+);
 
 function rejectUnlessResolvedWithin(promise, timeout) {
   if (timeout === 0) return promise;
