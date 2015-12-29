@@ -32,7 +32,7 @@ module.exports.prepareActions = function (as) {
       initialTransitions[initialState] = t;
       duringTransitions[t.during] = t;
       t.initial = initialState;
-      t.name = `${actionName}:${t.initial}->${t.target}`;
+      //t.name = `${actionName}:${t.initial}->${t.target}`;
       addState(t.initial, t);
       addState(t.during, t);
       addState(t.target);
@@ -70,7 +70,6 @@ const BaseMethods = {
      * @return {Promise} rejecting promise
      */
     stateTransitionRejection(rejected) {
-      //this.error(level => `Executing ${this._transition.name} transition leads to ${rejected}`);
       this.state = 'failed';
       this._transitionPromise = undefined;
       this._transition = undefined;
@@ -163,7 +162,6 @@ function rejectUnlessResolvedWithin(promise, timeout) {
 
   return new Promise(function (fullfill, reject) {
     const th = setTimeout(() => {
-      //console.log(`Not resolved within ${timeout}ms`);
       reject(new Error(`Not resolved within ${timeout}ms`))
     }, timeout);
 
@@ -201,8 +199,8 @@ function thisResolverPromise() {
  * delivered again. This enshures that several consequent
  * transitions in a row will be fullfiled by the same promise.
  * There can only be one transition in place at a given point in time.
- * @param {Object} object where we define the metods
- * @param {Object} actions object describing the state transitions
+ * @param {Object} object where we define the metods
+ * @param {Object} actionsAndStates object describing the state transitions
  */
 module.exports.defineActionMethods = function (object, actionsAndStates) {
   const actions = actionsAndStates[0];
@@ -220,7 +218,6 @@ module.exports.defineActionMethods = function (object, actionsAndStates) {
 
     Object.defineProperty(object, actionName, {
       value: function () {
-
         // target state already reached
         if (this.state === action.target) {
           return Promise.resolve(this);
@@ -245,8 +242,6 @@ module.exports.defineActionMethods = function (object, actionsAndStates) {
           return this._transitionPromise;
         } else if (this._transition) {
           if (action.during[this._transition.during]) {
-            //console.log(`XXX ${this.state} ${action.during[this._transition.during]}`);
-
             return this._transitionPromise;
           }
         }
@@ -256,14 +251,3 @@ module.exports.defineActionMethods = function (object, actionsAndStates) {
     });
   });
 };
-
-/*
-function mixin(target, source) {
-  target = target.prototype; source = source.prototype;
-
-  Object.getOwnPropertyNames(source).forEach(function (name) {
-    if (name !== "constructor") Object.defineProperty(target, name,
-      Object.getOwnPropertyDescriptor(source, name));
-  });
-}
-*/
