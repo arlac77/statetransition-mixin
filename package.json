@@ -1,7 +1,7 @@
 {
   "name": "statetransition-mixin",
   "description": "mixin to declare state transition methots like start & stop",
-  "main": "StatesTransitionMixin.js",
+  "main": "StateTransitionMixin.js",
   "scripts": {
     "cover": "node --harmony ./node_modules/istanbul/lib/cli.js cover --hook-run-in-context ./node_modules/mocha/bin/_mocha -- --R spec --U exports tests",
     "doc": "./node_modules/.bin/jsdoc index.js",

@@ -50,7 +50,7 @@ module.exports.prepareActions = function (as) {
   return [actions, states];
 };
 
-const _Base = {
+const BaseMethods = {
   /**
    * Called when state transition action is not allowed
    * @param {Object} action
@@ -101,7 +101,7 @@ exports.defineStateTransitionProperties = function (object, actions, currentStat
     }
   };
 
-  Object.assign(object, Base);
+  Object.assign(object, BaseMethods);
   Object.defineProperties(object, properties);
 };
 
@@ -153,10 +153,6 @@ module.exports.StateTransitionMixin = (superclass, actions, currentState) => cla
     }
   }
 };
-
-console.log(
-  `KEYS: ${Object.getOwnPropertyNames(module.exports.StateTransitionMixin)} ${module.exports.StateTransitionMixin}`
-);
 
 function rejectUnlessResolvedWithin(promise, timeout) {
   if (timeout === 0) return promise;
