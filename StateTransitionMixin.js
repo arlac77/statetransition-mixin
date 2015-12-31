@@ -101,7 +101,12 @@ exports.defineStateTransitionProperties = function (object, actions, currentStat
     }
   };
 
-  Object.assign(object, BaseMethods);
+  Object.keys(BaseMethods).forEach(name => {
+    if (object[name] === undefined) {
+      object[name] = BaseMethods[name];
+    }
+  });
+
   Object.defineProperties(object, properties);
 };
 
@@ -220,12 +225,16 @@ module.exports.defineActionMethods = function (object, actionsAndStates, enumera
 
       // normal start we are in the initial state of the action
       if (action.initial[this.state]) {
+
+        // some transition is ongoing
         if (this._transition) {
           const t = this._transition;
+
+          // we terminate it silently ?
+          // then do what we originally wanted
           return this.stateTransitionRejection(new Error(
-            `Terminate ${t.name} to prepare ${actionName}`), this.state).
+            `Terminate ${t.name} to prepare ${actionName}`), t.initial).
           then(f => {}, r => {
-            //console.log(`${actionName} after rejecting ${t.name}`);
             return this[actionName]();
           });
         }
@@ -236,10 +245,16 @@ module.exports.defineActionMethods = function (object, actionsAndStates, enumera
         this._transitionPromise = rejectUnlessResolvedWithin(this[privateActionName](), this._transition
           .timeout).then(
           resolved => {
+
             if (!this._transition) {
+              // here we end if we canceled a transtion
+              // need some better ideas to communicate
+              return this;
+              /*
               return this.stateTransitionRejection(new Error(
                 `Should never happen: ${this.state} and no transition coming from ${actionName}`
               ), 'failed');
+              */
             }
 
             this.state = this._transition.target;
