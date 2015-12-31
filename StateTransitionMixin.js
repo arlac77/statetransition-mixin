@@ -73,7 +73,6 @@ const BaseMethods = {
       this.state = 'failed';
       this._transitionPromise = undefined;
       this._transition = undefined;
-
       return Promise.reject(rejected);
     },
 
@@ -164,16 +163,18 @@ function rejectUnlessResolvedWithin(promise, timeout) {
     }, timeout);
 
     return promise.then((fullfilled, rejected) => {
-      //console.log(`AA ${fullfilled} : ${rejected}`);
-      clearTimeout(th);
+        clearTimeout(th);
 
-      if (fullfilled) {
-        fullfill(fullfilled);
-      }
-      if (rejected) {
-        reject(rejected);
-      }
-    });
+        if (fullfilled) {
+          fullfill(fullfilled);
+        }
+        if (rejected) {
+          reject(rejected);
+        }
+      })
+      .catch(r => {
+        reject(r);
+      });
   });
 }
 
@@ -232,15 +233,15 @@ module.exports.defineActionMethods = function (object, actionsAndStates, enumera
         this.state = this._transition.during;
 
         this._transitionPromise = rejectUnlessResolvedWithin(this[privateActionName](), this._transition
-            .timeout)
-          .then(
-            resolved => {
-              this.state = this._transition.target;
-              this._transitionPromise = undefined;
-              this._transition = undefined;
+          .timeout).then(
+          resolved => {
 
-              return this;
-            }, rejected => this.stateTransitionRejection(rejected));
+            this.state = this._transition.target;
+            this._transitionPromise = undefined;
+            this._transition = undefined;
+
+            return this;
+          }, rejected => this.stateTransitionRejection(rejected));
 
         return this._transitionPromise;
       } else if (this._transition) {

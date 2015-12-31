@@ -40,10 +40,12 @@ class StatefullClass extends stm.StateTransitionMixin(BaseClass, actions, 'stopp
     this.shouldReject = shouldReject;
   }
   _start() {
+    if (this.shouldReject) return Promise.reject(new Error("always reject"));
+
     return new Promise((f, r) => {
       setTimeout(() => {
         if (this.shouldReject) {
-          r(new Error("always reject"));
+          r(Promise.reject(new Error("always reject")));
         } else {
           f(this);
         }
@@ -135,7 +137,19 @@ describe('states', function () {
       });
     });
 
-    it('handle failure while starting', function (done) {
+    it('handle failure while starting without timeout guard', function (done) {
+      const o = new StatefullClass(0, true);
+
+      o.start().then((f, r) => {
+        console.log(`${f} ${r}`);
+      }).catch(e => {
+        //console.log(`catch: ${e}`);
+        assert.equal(o.state, 'failed');
+        done();
+      });
+    });
+
+    it('handle failure while starting with timeout guard', function (done) {
       const o = new StatefullClass(10, true);
 
       o.start().then((f, r) => {
