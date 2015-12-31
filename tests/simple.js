@@ -58,7 +58,7 @@ class StatefullClass extends stm.StateTransitionMixin(BaseClass, actions, 'stopp
   }
 }
 
-stm.defineActionMethods(StatefullClass.prototype, actions);
+stm.defineActionMethods(StatefullClass.prototype, actions, true);
 
 describe('states', function () {
   describe('static', function () {
@@ -74,6 +74,11 @@ describe('states', function () {
       assert.isDefined(o.start());
       assert.isDefined(o._start());
       assert.isDefined(o._stop());
+    });
+
+    it('defined methods are enumerable', function () {
+      const assigend = Object.assign({}, StatefullClass.prototype);
+      assert.isDefined(assigend.start);
     });
   });
 
