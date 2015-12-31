@@ -26,7 +26,7 @@ const actions = stm.prepareActions({
     starting: {
       target: "stopped",
       during: "stopping",
-      timeout: 100
+      timeout: 0
     }
   },
   swim: {
@@ -39,19 +39,24 @@ const actions = stm.prepareActions({
 class BaseClass {}
 
 class StatefullClass extends stm.StateTransitionMixin(BaseClass, actions, 'stopped') {
-  constructor(startTime, shouldReject) {
+  constructor(startTime, shouldReject, shouldThrow) {
     super();
     this.startTime = startTime;
     this.shouldReject = shouldReject;
+    this.shouldThrow = shouldThrow;
   }
   _start() {
-    if (this.shouldReject) return Promise.reject(new Error("always reject"));
-
+    if (this.startTime === 0) {
+      if (this.shouldReject) return Promise.reject(new Error("always reject"));
+      if (this.shouldThrow) throw new Error("always throw");
+    }
     return new Promise((f, r) => {
       setTimeout(() => {
         if (this.shouldReject) {
           r(Promise.reject(new Error("always reject")));
-        } else {
+        }
+        if (this.shouldThrow) throw new Error("always throw");
+        else {
           f(this);
         }
       }, this.startTime);
@@ -70,19 +75,24 @@ describe('ES6 class', function () {
 });
 
 describe('plain object', function () {
-  checks((startTime, shouldReject) => {
+  checks((startTime, shouldReject, shouldThrow) => {
     const o = {
       toString() {
           return "plain object";
         },
         _start() {
-          if (shouldReject) return Promise.reject(new Error("always reject"));
+          if (startTime === 0) {
+            if (shouldReject) return Promise.reject(new Error("always reject"));
+            if (shouldThrow) throw new Error("always throw");
+          }
 
           return new Promise((f, r) => {
             setTimeout(() => {
               if (shouldReject) {
                 r(Promise.reject(new Error("always reject")));
-              } else {
+              }
+              if (this.shouldThrow) throw new Error("always throw");
+              else {
                 f(this);
               }
             }, startTime);
@@ -172,7 +182,7 @@ function checks(factory) {
 
     describe('failures', function () {
       it('illegal transition', function (done) {
-        const o = factory(0, false);
+        const o = factory(0, false, false);
         try {
           o.swim().then(() => {
             console.log(`swimming ?`);
@@ -188,34 +198,41 @@ function checks(factory) {
       });
 
       it('handle timeout while starting', function (done) {
-        const o = factory(1000, false);
+        const o = factory(1000, false, false);
         o.start().then(() => {}).catch(e => {
           assert.equal(o.state, 'failed');
           done();
         });
       });
 
-      it('handle failure while starting without timeout guard', function (done) {
-        const o = factory(0, true);
+      chechFailure('failure (reject)', true, false);
+      chechFailure('failure (throw)', false, true);
 
-        o.start().then((f, r) => {
-          console.log(`${f} ${r}`);
-        }).catch(e => {
-          assert.equal(o.state, 'failed');
-          done();
+      function chechFailure(name, shouldReject, shoudThrow) {
+        it(`handle ${name} while starting without timeout guard`, function (done) {
+          const o = factory(0, true, false);
+
+          o.start().then((f, r) => {
+            console.log(`${f} ${r}`);
+          }).catch(e => {
+            console.log(`catch ${name} ${e}`);
+            assert.equal(o.state, 'failed');
+            done();
+          });
         });
-      });
 
-      it('handle failure while starting with timeout guard', function (done) {
-        const o = factory(10, true);
+        it(`handle ${name} while starting with timeout guard`, function (done) {
+          const o = factory(10, true, false);
 
-        o.start().then((f, r) => {
-          console.log(`${f} ${r}`);
-        }).catch(e => {
-          assert.equal(o.state, 'failed');
-          done();
+          o.start().then((f, r) => {
+            console.log(`${f} ${r}`);
+          }).catch(e => {
+            console.log(`catch ${name} ${e}`);
+            assert.equal(o.state, 'failed');
+            done();
+          });
         });
-      });
+      }
     });
   });
 }
