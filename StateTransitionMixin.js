@@ -160,16 +160,12 @@ function rejectUnlessResolvedWithin(promise, timeout) {
     }, timeout);
 
     return promise.then(fullfilled => {
-        clearTimeout(th);
-        fullfill(fullfilled);
-      }, rejected => {
-        clearTimeout(th);
-        reject(rejected);
-      })
-      .catch(r => {
-        clearTimeout(th);
-        reject(r);
-      });
+      clearTimeout(th);
+      fullfill(fullfilled);
+    }, rejected => {
+      clearTimeout(th);
+      reject(rejected);
+    });
   });
 }
 
