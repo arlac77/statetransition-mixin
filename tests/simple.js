@@ -28,6 +28,11 @@ const actions = stm.prepareActions({
       during: "stopping",
       timeout: 100
     }
+  },
+  swim: {
+    diving: {
+      target: "swimming"
+    }
   }
 });
 
@@ -54,7 +59,7 @@ class StatefullClass extends stm.StateTransitionMixin(BaseClass, actions, 'stopp
   }
 
   toString() {
-    return `sample: ${this.state}`
+    return `sample`;
   }
 }
 
@@ -134,6 +139,22 @@ describe('states', function () {
   });
 
   describe('failures', function () {
+    it('illegal transition', function (done) {
+      const o = new StatefullClass(0, false);
+      try {
+        o.swim().then(() => {
+          console.log(`swimming ?`);
+        }).catch(e => {
+          console.log(`swimming failed: ${e}`);
+          assert.ok(o.state);
+          done();
+        });
+      } catch (e) {
+        console.log(`error: ${e}`);
+        done(e);
+      }
+    });
+
     it('handle timeout while starting', function (done) {
       const o = new StatefullClass(1000, false);
       o.start().then(() => {}).catch(e => {
