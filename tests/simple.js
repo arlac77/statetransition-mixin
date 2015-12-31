@@ -201,7 +201,6 @@ function checks(factory) {
         o.start().then((f, r) => {
           console.log(`${f} ${r}`);
         }).catch(e => {
-          //console.log(`catch: ${e}`);
           assert.equal(o.state, 'failed');
           done();
         });
@@ -213,7 +212,6 @@ function checks(factory) {
         o.start().then((f, r) => {
           console.log(`${f} ${r}`);
         }).catch(e => {
-          //console.log(`catch: ${e}`);
           assert.equal(o.state, 'failed');
           done();
         });

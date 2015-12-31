@@ -32,7 +32,7 @@ module.exports.prepareActions = function (as) {
       initialTransitions[initialState] = t;
       duringTransitions[t.during] = t;
       t.initial = initialState;
-      //t.name = `${actionName}:${t.initial}->${t.target}`;
+      t.name = `${actionName}:${t.initial}->${t.target}`;
       addState(t.initial, t);
       addState(t.during, t);
       addState(t.target);
@@ -69,8 +69,8 @@ const BaseMethods = {
      * Resets the transition
      * @return {Promise} rejecting promise
      */
-    stateTransitionRejection(rejected) {
-      this.state = 'failed';
+    stateTransitionRejection(rejected, newState) {
+      this.state = newState;
       this._transitionPromise = undefined;
       this._transition = undefined;
       return Promise.reject(rejected);
@@ -124,9 +124,8 @@ module.exports.StateTransitionMixin = (superclass, actions, currentState) => cla
    * Resets the transition
    * @return {Promise} rejecting promise
    */
-  stateTransitionRejection(rejected) {
-    //this.error(level => `Executing ${this._transition.name} transition leads to ${rejected}`);
-    this.state = 'failed';
+  stateTransitionRejection(rejected, newState) {
+    this.state = newState;
     this._transitionPromise = undefined;
     this._transition = undefined;
 
@@ -139,9 +138,7 @@ module.exports.StateTransitionMixin = (superclass, actions, currentState) => cla
    * @param {String} oldState
    * @param {String} newState
    */
-  stateChanged(oldState, newState) {
-    //this.trace(level => `${this} transitioned from ${oldState} -> ${newState}`);
-  }
+  stateChanged(oldState, newState) {}
 
   get state() {
     return this._state;
@@ -162,17 +159,15 @@ function rejectUnlessResolvedWithin(promise, timeout) {
       reject(new Error(`Not resolved within ${timeout}ms`))
     }, timeout);
 
-    return promise.then((fullfilled, rejected) => {
+    return promise.then(fullfilled => {
         clearTimeout(th);
-
-        if (fullfilled) {
-          fullfill(fullfilled);
-        }
-        if (rejected) {
-          reject(rejected);
-        }
+        fullfill(fullfilled);
+      }, rejected => {
+        clearTimeout(th);
+        reject(rejected);
       })
       .catch(r => {
+        clearTimeout(th);
         reject(r);
       });
   });
@@ -229,19 +224,34 @@ module.exports.defineActionMethods = function (object, actionsAndStates, enumera
 
       // normal start we are in the initial state of the action
       if (action.initial[this.state]) {
+        if (this._transition) {
+          const t = this._transition;
+          return this.stateTransitionRejection(new Error(
+            `Terminate ${t.name} to prepare ${actionName}`), this.state).
+          then(f => {}, r => {
+            //console.log(`${actionName} after rejecting ${t.name}`);
+            return this[actionName]();
+          });
+        }
+
         this._transition = action.initial[this.state];
         this.state = this._transition.during;
 
         this._transitionPromise = rejectUnlessResolvedWithin(this[privateActionName](), this._transition
           .timeout).then(
           resolved => {
+            if (!this._transition) {
+              return this.stateTransitionRejection(new Error(
+                `Should never happen: ${this.state} and no transition coming from ${actionName}`
+              ), 'failed');
+            }
 
             this.state = this._transition.target;
             this._transitionPromise = undefined;
             this._transition = undefined;
 
             return this;
-          }, rejected => this.stateTransitionRejection(rejected));
+          }, rejected => this.stateTransitionRejection(rejected, 'failed'));
 
         return this._transitionPromise;
       } else if (this._transition) {
