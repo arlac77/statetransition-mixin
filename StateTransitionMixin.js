@@ -83,9 +83,7 @@ const BaseMethods = {
      * @param {String} oldState
      * @param {String} newState
      */
-    stateChanged(oldState, newState) {
-      //this.trace(level => `${this} transitioned from ${oldState} -> ${newState}`);
-    }
+    stateChanged(oldState, newState) {}
 };
 
 exports.defineStateTransitionProperties = function (object, actions, currentState) {
@@ -201,53 +199,59 @@ function thisResolverPromise() {
  * There can only be one transition in place at a given point in time.
  * @param {Object} object where we define the metods
  * @param {Object} actionsAndStates object describing the state transitions
+ * @param {Boolean} enumerable should the action methods be enumerable defaults to false
  */
-module.exports.defineActionMethods = function (object, actionsAndStates) {
+module.exports.defineActionMethods = function (object, actionsAndStates, enumerable) {
   const actions = actionsAndStates[0];
   const states = actionsAndStates[1];
+
+  const defaultProperties = {};
+
+  if (enumerable) {
+    defaultProperties.enumerable = true;
+  }
 
   Object.keys(actions).forEach(actionName => {
     const action = actions[actionName];
     const privateActionName = '_' + actionName;
 
     if (!object.hasOwnProperty(privateActionName)) {
-      Object.defineProperty(object, privateActionName, {
-        value: thisResolverPromise
-      });
+      defaultProperties.value = thisResolverPromise;
+      Object.defineProperty(object, privateActionName, defaultProperties);
     }
 
-    Object.defineProperty(object, actionName, {
-      value: function () {
-        // target state already reached
-        if (this.state === action.target) {
-          return Promise.resolve(this);
-        }
-
-        // normal start we are in the initial state of the action
-        if (action.initial[this.state]) {
-          this._transition = action.initial[this.state];
-          this.state = this._transition.during;
-
-          this._transitionPromise = rejectUnlessResolvedWithin(this[privateActionName](), this._transition
-              .timeout)
-            .then(
-              resolved => {
-                this.state = this._transition.target;
-                this._transitionPromise = undefined;
-                this._transition = undefined;
-
-                return this;
-              }, rejected => this.stateTransitionRejection(rejected));
-
-          return this._transitionPromise;
-        } else if (this._transition) {
-          if (action.during[this._transition.during]) {
-            return this._transitionPromise;
-          }
-        }
-
-        return this.illegalStateTransition(action);
+    defaultProperties.value = function () {
+      // target state already reached
+      if (this.state === action.target) {
+        return Promise.resolve(this);
       }
-    });
+
+      // normal start we are in the initial state of the action
+      if (action.initial[this.state]) {
+        this._transition = action.initial[this.state];
+        this.state = this._transition.during;
+
+        this._transitionPromise = rejectUnlessResolvedWithin(this[privateActionName](), this._transition
+            .timeout)
+          .then(
+            resolved => {
+              this.state = this._transition.target;
+              this._transitionPromise = undefined;
+              this._transition = undefined;
+
+              return this;
+            }, rejected => this.stateTransitionRejection(rejected));
+
+        return this._transitionPromise;
+      } else if (this._transition) {
+        if (action.during[this._transition.during]) {
+          return this._transitionPromise;
+        }
+      }
+
+      return this.illegalStateTransition(action);
+    };
+
+    Object.defineProperty(object, actionName, defaultProperties);
   });
 };
