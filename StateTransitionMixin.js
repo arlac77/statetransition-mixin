@@ -160,9 +160,7 @@ function rejectUnlessResolvedWithin(promise, timeout) {
   if (timeout === 0) return promise;
 
   return new Promise(function (fullfill, reject) {
-    const th = setTimeout(() => {
-      reject(new Error(`Not resolved within ${timeout}ms`))
-    }, timeout);
+    const th = setTimeout(() => reject(new Error(`Not resolved within ${timeout}ms`)), timeout);
 
     return promise.then(fullfilled => {
       clearTimeout(th);
