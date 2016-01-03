@@ -156,11 +156,11 @@ module.exports.StateTransitionMixin = (superclass, actions, currentState) => cla
   }
 };
 
-function rejectUnlessResolvedWithin(promise, timeout) {
+function rejectUnlessResolvedWithin(promise, timeout, name) {
   if (timeout === 0) return promise;
 
   return new Promise(function (fullfill, reject) {
-    const th = setTimeout(() => reject(new Error(`Not resolved within ${timeout}ms`)), timeout);
+    const th = setTimeout(() => reject(new Error(`${name} not resolved within ${timeout}ms`)), timeout);
 
     return promise.then(fullfilled => {
       clearTimeout(th);
@@ -241,9 +241,8 @@ module.exports.defineActionMethods = function (object, actionsAndStates, enumera
         this.state = this._transition.during;
 
         this._transitionPromise = rejectUnlessResolvedWithin(this[privateActionName](), this._transition
-          .timeout).then(
+          .timeout, this._transition.name).then(
           resolved => {
-
             if (!this._transition) {
               // here we end if we canceled a transtion
               // need some better ideas to communicate
