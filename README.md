@@ -21,7 +21,7 @@ usage
 =====
 
 ```javascript
-const stm = require('statetranstion-mixin');
+const stm = require('statetransition-mixin');
 
 const actions = stm.prepareActions({
 start: { // declare start() and call _start() internally
@@ -66,7 +66,7 @@ for es6 classes to
 ------------------
 
 ```javascript
-const stm = require('statetranstion-mixin');
+const stm = require('statetransition-mixin');
 
 const actions = stm.prepareActions({
 start: { // declare start() and call _start() internally
