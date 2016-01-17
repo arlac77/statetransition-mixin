@@ -172,8 +172,8 @@ function rejectUnlessResolvedWithin(promise, timeout, name) {
   });
 }
 
-function thisResolverPromise() {
-  return Promise.resolve(this);
+function resolverPromise() {
+  return Promise.resolve();
 }
 
 /**
@@ -211,7 +211,7 @@ module.exports.defineActionMethods = function (object, actionsAndStates, enumera
     const privateActionName = '_' + actionName;
 
     if (!object.hasOwnProperty(privateActionName)) {
-      defaultProperties.value = thisResolverPromise;
+      defaultProperties.value = resolverPromise;
       Object.defineProperty(object, privateActionName, defaultProperties);
     }
 
