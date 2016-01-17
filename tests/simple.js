@@ -70,11 +70,11 @@ class StatefullClass extends stm.StateTransitionMixin(BaseClass, actions, 'stopp
 
 stm.defineActionMethods(StatefullClass.prototype, actions, true);
 
-describe('ES6 class', function () {
+describe('ES6 class', () => {
   checks((timeout, fail) => new StatefullClass(timeout, fail));
 });
 
-describe('plain object', function () {
+describe('plain object', () => {
   checks((startTime, shouldReject, shouldThrow) => {
     const o = {
       toString() {
@@ -107,46 +107,46 @@ describe('plain object', function () {
 });
 
 function checks(factory) {
-  describe('states', function () {
-    describe('static', function () {
+  describe('states', () => {
+    describe('static', () => {
       const o = factory(10, false);
 
-      it('has initial state', function () {
+      it('has initial state', () => {
         o.state = 'stopped';
         assert.equal(o.state, 'stopped');
       });
 
-      it('has action methods', function () {
-        assert.isDefined(o.stop());
-        assert.isDefined(o.start());
-        assert.isDefined(o._start());
-        assert.isDefined(o._stop());
+      it('has action methods', () => {
+        assert.isDefined(o.stop);
+        assert.isDefined(o.start);
+        assert.isDefined(o._start);
+        assert.isDefined(o._stop);
       });
 
-      it('defined methods are enumerable', function () {
+      it('defined methods are enumerable', () => {
         const assigend = Object.assign({}, StatefullClass.prototype);
         assert.isDefined(assigend.start);
       });
     });
 
-    describe('start-stop', function () {
+    describe('start-stop', () => {
       const o = factory(10, false);
 
-      it('can be started', function (done) {
+      it('can be started', done => {
         o.start().then(() => {
           assert.equal(o.state, 'running');
           done();
         }, done);
       });
 
-      it('can be started while running', function (done) {
+      it('can be started while running', done => {
         o.start().then(() => {
           assert.equal(o.state, 'running');
           done();
         }, done);
       });
 
-      it('and stoped', function (done) {
+      it('and stoped', done => {
         o.stop().then(() => {
           assert.equal(o.state, 'stopped');
           done();
@@ -154,7 +154,7 @@ function checks(factory) {
       });
     });
 
-    it('can be started while starting', function (done) {
+    it('can be started while starting', done => {
       const o = factory(10, false);
 
       o.start().then(() => {});
@@ -167,7 +167,7 @@ function checks(factory) {
       }, done).catch(done);
     });
 
-    it('can be stopped while starting', function (done) {
+    it('can be stopped while starting', done => {
       const o = factory(100, false);
 
       o.start().then(() => {});
@@ -180,8 +180,8 @@ function checks(factory) {
       }, done).catch(done);
     });
 
-    describe('failures', function () {
-      it('illegal transition', function (done) {
+    describe('failures', () => {
+      it('illegal transition', done => {
         const o = factory(0, false, false);
         try {
           o.swim().then(() => {
@@ -197,7 +197,7 @@ function checks(factory) {
         }
       });
 
-      it('handle timeout while starting', function (done) {
+      it('handle timeout while starting', done => {
         const o = factory(1000, false, false);
         o.start().then(() => {}).catch(e => {
           assert.equal(o.state, 'failed');
@@ -209,7 +209,7 @@ function checks(factory) {
       chechFailure('failure (throw)', false, true);
 
       function chechFailure(name, shouldReject, shoudThrow) {
-        it(`handle ${name} while starting without timeout guard`, function (done) {
+        it(`handle ${name} while starting without timeout guard`, done => {
           const o = factory(0, true, false);
 
           o.start().then((f, r) => {
@@ -221,7 +221,7 @@ function checks(factory) {
           });
         });
 
-        it(`handle ${name} while starting with timeout guard`, function (done) {
+        it(`handle ${name} while starting with timeout guard`, done => {
           const o = factory(10, true, false);
 
           o.start().then((f, r) => {
