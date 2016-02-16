@@ -17,8 +17,6 @@ module.exports.prepareActions = function (as) {
     if (transition) {
       states[name].transitions[transition.initial] = transition;
     }
-
-    return states[name];
   }
 
   Object.keys(as).forEach(actionName => {
@@ -29,6 +27,11 @@ module.exports.prepareActions = function (as) {
 
     Object.keys(a).forEach(initialState => {
       const t = a[initialState];
+
+      if (!t.rejected) {
+        t.rejected = 'failed';
+      }
+
       initialTransitions[initialState] = t;
       duringTransitions[t.during] = t;
       t.initial = initialState;
@@ -36,6 +39,7 @@ module.exports.prepareActions = function (as) {
       addState(t.initial, t);
       addState(t.during, t);
       addState(t.target);
+      addState(t.rejected);
       target = t.target;
     });
     actions[actionName] = {
@@ -259,7 +263,7 @@ module.exports.defineActionMethods = function (object, actionsAndStates, enumera
             this._transition = undefined;
 
             return this;
-          }, rejected => this.stateTransitionRejection(rejected, 'failed'));
+          }, rejected => this.stateTransitionRejection(rejected, this._transition.rejected));
 
         return this._transitionPromise;
       } else if (this._transition) {

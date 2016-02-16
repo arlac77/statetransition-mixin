@@ -14,6 +14,7 @@ const actions = stm.prepareActions({
     stopped: {
       target: "running",
       during: "starting",
+      rejected: "failed_special",
       timeout: 200
     }
   },
@@ -21,6 +22,7 @@ const actions = stm.prepareActions({
     running: {
       target: "stopped",
       during: "stopping",
+      rejected: "failed",
       timeout: 100
     },
     starting: {
@@ -200,7 +202,7 @@ function checks(factory) {
       it('handle timeout while starting', done => {
         const o = factory(1000, false, false);
         o.start().then(() => {}).catch(e => {
-          assert.equal(o.state, 'failed');
+          assert.equal(o.state, 'failed_special');
           done();
         });
       });
@@ -216,7 +218,7 @@ function checks(factory) {
             console.log(`${f} ${r}`);
           }).catch(e => {
             console.log(`catch ${name} ${e}`);
-            assert.equal(o.state, 'failed');
+            assert.equal(o.state, 'failed_special');
             done();
           });
         });
@@ -228,7 +230,7 @@ function checks(factory) {
             console.log(`${f} ${r}`);
           }).catch(e => {
             console.log(`catch ${name} ${e}`);
-            assert.equal(o.state, 'failed');
+            assert.equal(o.state, 'failed_special');
             done();
           });
         });
