@@ -1,4 +1,6 @@
 /* jslint node: true, esnext: true */
+/* eslint-env es6 */
+/* eslint valid-jsdoc: 2 */
 
 "use strict";
 
@@ -61,7 +63,7 @@ module.exports.prepareActions = function (as) {
 const BaseMethods = {
   /**
    * Called when state transition action is not allowed
-   * @param {Object} action
+   * @param {Object} action to be acted on
    * @return {Promise} rejecting with an Error
    */
   illegalStateTransition(action) {
@@ -71,6 +73,8 @@ const BaseMethods = {
     /**
      * Called when the state transtion implementation promise rejects.
      * Resets the transition
+     * @param {Object} rejected initiating error
+     * @param {String} newState final state of error
      * @return {Promise} rejecting promise
      */
     stateTransitionRejection(rejected, newState) {
@@ -83,11 +87,14 @@ const BaseMethods = {
     /**
      * To be overwritten
      * Called when the state changes
-     * @param {String} oldState
-     * @param {String} newState
+     * @param {String} oldState previous state
+     * @param {String} newState new state
+     * @return {void}
      */
     stateChanged(oldState, newState) {}
 };
+
+exports.BaseMethods = BaseMethods;
 
 exports.defineStateTransitionProperties = function (object, actions, currentState) {
 
@@ -117,7 +124,7 @@ module.exports.StateTransitionMixin = (superclass, actions, currentState) => cla
     }
     /**
      * Called when state transition action is not allowed
-     * @param {Object} action
+     * @param {Object} action to be acted on
      * @return {Promise} rejecting with an Error
      */
   illegalStateTransition(action) {
@@ -127,6 +134,8 @@ module.exports.StateTransitionMixin = (superclass, actions, currentState) => cla
   /**
    * Called when the state transtion implementation promise rejects.
    * Resets the transition
+   * @param {Object} rejected initiating error
+   * @param {String} newState final state of error
    * @return {Promise} rejecting promise
    */
   stateTransitionRejection(rejected, newState) {
@@ -140,8 +149,9 @@ module.exports.StateTransitionMixin = (superclass, actions, currentState) => cla
   /**
    * To be overwritten
    * Called when the state changes
-   * @param {String} oldState
-   * @param {String} newState
+   * @param {String} oldState previous state
+   * @param {String} newState new state
+   * @return {void}
    */
   stateChanged(oldState, newState) {}
 
@@ -195,6 +205,7 @@ function resolverPromise() {
  * @param {Object} object where we define the metods
  * @param {Object} actionsAndStates object describing the state transitions
  * @param {Boolean} enumerable should the action methods be enumerable defaults to false
+ * @return {void}
  */
 module.exports.defineActionMethods = function (object, actionsAndStates, enumerable) {
   const actions = actionsAndStates[0];
