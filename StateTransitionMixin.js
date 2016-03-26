@@ -112,7 +112,11 @@ exports.defineStateTransitionProperties = function (object, actions, currentStat
     }
   };
 
-  Object.assign(object, BaseMethods);
+  Object.keys(BaseMethods).forEach(name => {
+    if (object[name] === undefined) {
+      object[name] = BaseMethods[name];
+    }
+  });
 
   Object.defineProperties(object, properties);
 };

@@ -68,6 +68,10 @@ class StatefullClass extends stm.StateTransitionMixin(BaseClass, actions, 'stopp
   toString() {
     return 'ES6 class';
   }
+
+  stateChanged(oldState, newState) {
+    this._newState = newState;
+  }
 }
 
 stm.defineActionMethods(StatefullClass.prototype, actions, true);
@@ -79,9 +83,14 @@ describe('ES6 class', () => {
 describe('plain object', () => {
   checks((startTime, shouldReject, shouldThrow) => {
     const o = {
-      toString() {
+      stateChanged(oldState, newState) {
+          this._newState = newState;
+        },
+
+        toString() {
           return "plain object";
         },
+
         _start() {
           if (startTime === 0) {
             if (shouldReject) return Promise.reject(new Error("always reject"));
@@ -137,6 +146,13 @@ function checks(factory) {
       it('can be started', done => {
         o.start().then(() => {
           assert.equal(o.state, 'running');
+          done();
+        }, done);
+      });
+
+      it('has stateChanged called', done => {
+        o.start().then(() => {
+          assert.equal(o._newState, 'running');
           done();
         }, done);
       });
