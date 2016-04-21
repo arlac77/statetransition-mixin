@@ -202,7 +202,7 @@ function resolverPromise() {
  * will be called first.
  * It is expected that this function delivers a promise.
  * Special handling of consequent transitions:
- * While in a during state the former delivered primise will be
+ * While in a during state the former delivered promise will be
  * delivered again. This enshures that several consequent
  * transitions in a row will be fullfiled by the same promise.
  * There can only be one transition in place at a given point in time.
