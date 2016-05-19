@@ -85,6 +85,15 @@ const BaseMethods = {
     },
 
     /**
+     * Called to get the timeout value for a given transition
+     * @param {Object} transition
+     * @return {number} timeout for the transition
+     */
+    timeoutForTransition(transition) {
+      return transition.timeout;
+    },
+
+    /**
      * To be overwritten
      * Called when the state changes
      * @param {String} oldState previous state
@@ -148,6 +157,15 @@ module.exports.StateTransitionMixin = (superclass, actions, currentState) => cla
     this._transition = undefined;
 
     return Promise.reject(rejected);
+  }
+
+  /**
+   * Called to get the timeout value for a given transition
+   * @param {Object} transition
+   * @return {number} timeout for the transition
+   */
+  timeoutForTransition(transition) {
+    return transition.timeout;
   }
 
   /**
@@ -255,8 +273,8 @@ module.exports.defineActionMethods = function (object, actionsAndStates, enumera
         this._transition = action.initial[this.state];
         this.state = this._transition.during;
 
-        this._transitionPromise = rejectUnlessResolvedWithin(this[privateActionName](), this._transition
-          .timeout, this._transition.name).then(
+        this._transitionPromise = rejectUnlessResolvedWithin(this[privateActionName](), this.timeoutForTransition(
+          this._transition), this._transition.name).then(
           resolved => {
             if (!this._transition) {
               // here we end if we canceled a transtion
