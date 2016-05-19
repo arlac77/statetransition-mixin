@@ -1,7 +1,7 @@
 /* global describe, it, xit */
 /* jslint node: true, esnext: true */
 
-"use strict";
+'use strict';
 
 const chai = require('chai'),
   assert = chai.assert,
@@ -12,28 +12,28 @@ const chai = require('chai'),
 const actions = stm.prepareActions({
   start: {
     stopped: {
-      target: "running",
-      during: "starting",
-      rejected: "failed_special",
+      target: 'running',
+      during: 'starting',
+      rejected: 'failed_special',
       timeout: 200
     }
   },
   stop: {
     running: {
-      target: "stopped",
-      during: "stopping",
-      rejected: "failed",
+      target: 'stopped',
+      during: 'stopping',
+      rejected: 'failed',
       timeout: 100
     },
     starting: {
-      target: "stopped",
-      during: "stopping",
+      target: 'stopped',
+      during: 'stopping',
       timeout: 0
     }
   },
   swim: {
     diving: {
-      target: "swimming"
+      target: 'swimming'
     }
   }
 });
@@ -49,15 +49,15 @@ class StatefullClass extends stm.StateTransitionMixin(BaseClass, actions, 'stopp
   }
   _start() {
     if (this.startTime === 0) {
-      if (this.shouldReject) return Promise.reject(new Error("always reject"));
-      if (this.shouldThrow) throw new Error("always throw");
+      if (this.shouldReject) return Promise.reject(new Error('always reject'));
+      if (this.shouldThrow) throw new Error('always throw');
     }
     return new Promise((f, r) => {
       setTimeout(() => {
         if (this.shouldReject) {
-          r(Promise.reject(new Error("always reject")));
+          r(Promise.reject(new Error('always reject')));
         }
-        if (this.shouldThrow) throw new Error("always throw");
+        if (this.shouldThrow) throw new Error('always throw');
         else {
           f(this);
         }
@@ -88,21 +88,21 @@ describe('plain object', () => {
         },
 
         toString() {
-          return "plain object";
+          return 'plain object';
         },
 
         _start() {
           if (startTime === 0) {
-            if (shouldReject) return Promise.reject(new Error("always reject"));
-            if (shouldThrow) throw new Error("always throw");
+            if (shouldReject) return Promise.reject(new Error('always reject'));
+            if (shouldThrow) throw new Error('always throw');
           }
 
           return new Promise((f, r) => {
             setTimeout(() => {
               if (shouldReject) {
-                r(Promise.reject(new Error("always reject")));
+                r(Promise.reject(new Error('always reject')));
               }
-              if (this.shouldThrow) throw new Error("always throw");
+              if (this.shouldThrow) throw new Error('always throw');
               else {
                 f(this);
               }
@@ -111,7 +111,7 @@ describe('plain object', () => {
         }
     };
     stm.defineActionMethods(o, actions, true);
-    stm.defineStateTransitionProperties(o, actions, "stopped");
+    stm.defineStateTransitionProperties(o, actions, 'stopped');
 
     return o;
   });
@@ -223,10 +223,10 @@ function checks(factory) {
         });
       });
 
-      chechFailure('failure (reject)', true, false);
-      chechFailure('failure (throw)', false, true);
+      checkFailure('failure (reject)', true, false);
+      checkFailure('failure (throw)', false, true);
 
-      function chechFailure(name, shouldReject, shoudThrow) {
+      function checkFailure(name, shouldReject, shoudThrow) {
         it(`handle ${name} while starting without timeout guard`, done => {
           const o = factory(0, true, false);
 
