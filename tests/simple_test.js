@@ -66,7 +66,7 @@ class StatefullClass extends stm.StateTransitionMixin(BaseClass, actions, 'stopp
   }
 
   toString() {
-    return 'ES6 class';
+    return 'ES2015 class';
   }
 
   stateChanged(oldState, newState) {
@@ -76,7 +76,7 @@ class StatefullClass extends stm.StateTransitionMixin(BaseClass, actions, 'stopp
 
 stm.defineActionMethods(StatefullClass.prototype, actions, true);
 
-describe('ES6 class', () => checks((timeout, fail) => new StatefullClass(timeout, fail)));
+describe('ES2015 class', () => checks((timeout, fail) => new StatefullClass(timeout, fail)));
 
 describe('plain object', () =>
   checks((startTime, shouldReject, shouldThrow) => {
@@ -202,7 +202,7 @@ function checks(factory) {
         const o = factory(0, false, false);
         try {
           o.swim().then(() => {
-            console.log(`swimming ?`);
+            //console.log(`swimming ?`);
           }).catch(e => {
             //console.log(`swimming failed: ${e}`);
             assert.ok(o.state);
@@ -229,10 +229,7 @@ function checks(factory) {
         it(`handle ${name} while starting without timeout guard`, done => {
           const o = factory(0, true, false);
 
-          o.start().then((f, r) => {
-            console.log(`${f} ${r}`);
-          }).catch(e => {
-            //console.log(`catch ${name} ${e}`);
+          o.start().then(f => {}, r => {
             assert.equal(o.state, 'failed_special');
             done();
           });
@@ -241,10 +238,8 @@ function checks(factory) {
         it(`handle ${name} while starting with timeout guard`, done => {
           const o = factory(10, true, false);
 
-          o.start().then((f, r) => {
-            console.log(`${f} ${r}`);
-          }).catch(e => {
-            //console.log(`catch ${name} ${e}`);
+          o.start().then(f => {}, r => {
+            //console.log(`catch ${name} ${r}`);
             assert.equal(o.state, 'failed_special');
             done();
           });
