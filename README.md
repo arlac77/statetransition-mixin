@@ -64,7 +64,7 @@ myObject.stop().then( (o) => console.log('stopped == ${o.state}'));
 console.log('stopping == ${myObject.state}');
 ```
 
-for es6 classes to
+for ES2015 classes to
 ------------------
 
 ```javascript
@@ -106,7 +106,7 @@ _start() { // will be called to go from stopped to running
 
 stm.defineActionMethods(StatefullClass.prototype, actions);
 
-myObject = new StatefullClass();
+let myObject = new StatefullClass();
 
 console.log(myObject.state === 'stopped' ? "is stopped" : "hmm ?")
 
