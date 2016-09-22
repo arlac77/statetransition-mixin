@@ -76,11 +76,9 @@ class StatefullClass extends stm.StateTransitionMixin(BaseClass, actions, 'stopp
 
 stm.defineActionMethods(StatefullClass.prototype, actions, true);
 
-describe('ES6 class', () => {
-  checks((timeout, fail) => new StatefullClass(timeout, fail));
-});
+describe('ES6 class', () => checks((timeout, fail) => new StatefullClass(timeout, fail)));
 
-describe('plain object', () => {
+describe('plain object', () =>
   checks((startTime, shouldReject, shouldThrow) => {
     const o = {
       stateChanged(oldState, newState) {
@@ -102,8 +100,9 @@ describe('plain object', () => {
               if (shouldReject) {
                 r(Promise.reject(new Error('always reject')));
               }
-              if (this.shouldThrow) throw new Error('always throw');
-              else {
+              if (this.shouldThrow) {
+                throw new Error('always throw');
+              } else {
                 f(this);
               }
             }, startTime);
@@ -114,8 +113,8 @@ describe('plain object', () => {
     stm.defineStateTransitionProperties(o, actions, 'stopped');
 
     return o;
-  });
-});
+  })
+);
 
 function checks(factory) {
   describe('states', () => {
@@ -210,7 +209,7 @@ function checks(factory) {
             done();
           });
         } catch (e) {
-          console.log(`error: ${e}`);
+          //console.log(`error: ${e}`);
           done(e);
         }
       });
@@ -233,7 +232,7 @@ function checks(factory) {
           o.start().then((f, r) => {
             console.log(`${f} ${r}`);
           }).catch(e => {
-            console.log(`catch ${name} ${e}`);
+            //console.log(`catch ${name} ${e}`);
             assert.equal(o.state, 'failed_special');
             done();
           });
@@ -245,7 +244,7 @@ function checks(factory) {
           o.start().then((f, r) => {
             console.log(`${f} ${r}`);
           }).catch(e => {
-            console.log(`catch ${name} ${e}`);
+            //console.log(`catch ${name} ${e}`);
             assert.equal(o.state, 'failed_special');
             done();
           });
