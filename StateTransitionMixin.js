@@ -191,7 +191,7 @@ module.exports.StateTransitionMixin = (superclass, actions, currentState) => cla
 function rejectUnlessResolvedWithin(promise, timeout, name) {
   if (timeout === 0) return promise;
 
-  return new Promise(function (fullfill, reject) {
+  return new Promise((fullfill, reject) => {
     const th = setTimeout(() => reject(new Error(`${name} not resolved within ${timeout}ms`)), timeout);
 
     return promise.then(fullfilled => {
@@ -229,7 +229,7 @@ function resolverPromise() {
  * @param {Boolean} enumerable should the action methods be enumerable defaults to false
  * @return {void}
  */
-module.exports.defineActionMethods = function (object, actionsAndStates, enumerable) {
+module.exports.defineActionMethods = function (object, actionsAndStates, enumerable = false) {
   const actions = actionsAndStates[0];
   const states = actionsAndStates[1];
 
@@ -292,7 +292,8 @@ module.exports.defineActionMethods = function (object, actionsAndStates, enumera
             this._transition = undefined;
 
             return this;
-          }, rejected => this.stateTransitionRejection(rejected, this._transition.rejected));
+          }, rejected => this.stateTransitionRejection(rejected, this._transition && this._transition.rejected)
+        );
 
         return this._transitionPromise;
       } else if (this._transition) {
