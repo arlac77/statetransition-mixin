@@ -7,7 +7,7 @@ const chai = require('chai'),
   assert = chai.assert,
   expect = chai.expect,
   should = chai.should(),
-  stm = require('../StateTransitionMixin');
+  stm = require('../dist/StateTransitionMixin');
 
 const actions = stm.prepareActions({
   start: {

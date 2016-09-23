@@ -1,5 +1,5 @@
 module.exports = {
   require: {
-    'statetransition-mixin': require('./StateTransitionMixin')
+    'statetransition-mixin': require('./dist/StateTransitionMixin')
   }
-}
+};

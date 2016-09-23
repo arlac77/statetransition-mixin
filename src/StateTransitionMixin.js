@@ -2,9 +2,9 @@
 /* eslint-env es6 */
 /* eslint valid-jsdoc: 2 */
 
-"use strict";
+'use strict';
 
-module.exports.prepareActions = function (as) {
+function prepareActions(as) {
   const actions = {};
   const states = {};
 
@@ -58,7 +58,7 @@ module.exports.prepareActions = function (as) {
   */
 
   return [actions, states];
-};
+}
 
 const BaseMethods = {
   /**
@@ -103,9 +103,7 @@ const BaseMethods = {
     stateChanged(oldState, newState) {}
 };
 
-exports.BaseMethods = BaseMethods;
-
-exports.defineStateTransitionProperties = function (object, actions, currentState) {
+function defineStateTransitionProperties(object, actions, currentState) {
 
   const properties = {};
 
@@ -128,65 +126,67 @@ exports.defineStateTransitionProperties = function (object, actions, currentStat
   });
 
   Object.defineProperties(object, properties);
-};
+}
 
-module.exports.StateTransitionMixin = (superclass, actions, currentState) => class extends superclass {
-  constructor() {
-      super();
-      this._state = currentState;
+function StateTransitionMixin(superclass, actions, currentState) {
+  return class extends superclass {
+    constructor() {
+        super();
+        this._state = currentState;
+      }
+      /**
+       * Called when state transition action is not allowed
+       * @param {Object} action to be acted on
+       * @return {Promise} rejecting with an Error
+       */
+    illegalStateTransition(action) {
+      return Promise.reject(new Error(`Can't ${action.name} ${this} in ${this.state} state`));
     }
+
     /**
-     * Called when state transition action is not allowed
-     * @param {Object} action to be acted on
-     * @return {Promise} rejecting with an Error
+     * Called when the state transtion implementation promise rejects.
+     * Resets the transition
+     * @param {Object} rejected initiating error
+     * @param {String} newState final state of error
+     * @return {Promise} rejecting promise
      */
-  illegalStateTransition(action) {
-    return Promise.reject(new Error(`Can't ${action.name} ${this} in ${this.state} state`));
-  }
+    stateTransitionRejection(rejected, newState) {
+      this.state = newState;
+      this._transitionPromise = undefined;
+      this._transition = undefined;
 
-  /**
-   * Called when the state transtion implementation promise rejects.
-   * Resets the transition
-   * @param {Object} rejected initiating error
-   * @param {String} newState final state of error
-   * @return {Promise} rejecting promise
-   */
-  stateTransitionRejection(rejected, newState) {
-    this.state = newState;
-    this._transitionPromise = undefined;
-    this._transition = undefined;
-
-    return Promise.reject(rejected);
-  }
-
-  /**
-   * Called to get the timeout value for a given transition
-   * @param {Object} transition
-   * @return {number} timeout for the transition
-   */
-  timeoutForTransition(transition) {
-    return transition.timeout;
-  }
-
-  /**
-   * To be overwritten
-   * Called when the state changes
-   * @param {String} oldState previous state
-   * @param {String} newState new state
-   * @return {void}
-   */
-  stateChanged(oldState, newState) {}
-
-  get state() {
-    return this._state;
-  }
-  set state(newState) {
-    if (newState !== this._state) {
-      this.stateChanged(this._state, newState);
-      this._state = newState;
+      return Promise.reject(rejected);
     }
-  }
-};
+
+    /**
+     * Called to get the timeout value for a given transition
+     * @param {Object} transition
+     * @return {number} timeout for the transition
+     */
+    timeoutForTransition(transition) {
+      return transition.timeout;
+    }
+
+    /**
+     * To be overwritten
+     * Called when the state changes
+     * @param {String} oldState previous state
+     * @param {String} newState new state
+     * @return {void}
+     */
+    stateChanged(oldState, newState) {}
+
+    get state() {
+      return this._state;
+    }
+    set state(newState) {
+      if (newState !== this._state) {
+        this.stateChanged(this._state, newState);
+        this._state = newState;
+      }
+    }
+  };
+}
 
 function rejectUnlessResolvedWithin(promise, timeout, name) {
   if (timeout === 0) return promise;
@@ -229,7 +229,7 @@ function resolverPromise() {
  * @param {Boolean} enumerable should the action methods be enumerable defaults to false
  * @return {void}
  */
-module.exports.defineActionMethods = function (object, actionsAndStates, enumerable = false) {
+function defineActionMethods(object, actionsAndStates, enumerable = false) {
   const actions = actionsAndStates[0];
   const states = actionsAndStates[1];
 
@@ -307,4 +307,13 @@ module.exports.defineActionMethods = function (object, actionsAndStates, enumera
 
     Object.defineProperty(object, actionName, defaultProperties);
   });
+}
+
+
+export {
+  prepareActions,
+  BaseMethods,
+  defineStateTransitionProperties,
+  defineActionMethods,
+  StateTransitionMixin
 };
