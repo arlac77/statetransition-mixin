@@ -22,7 +22,7 @@ mixin to declare state transition methods like start & stop
 usage
 =====
 
-```javascript
+```js
 const stm = require('statetransition-mixin');
 
 const actions = stm.prepareActions({
@@ -67,7 +67,8 @@ console.log('stopping == ${myObject.state}');
 for ES2015 classes to
 ------------------
 
-```javascript
+<!-- skip-example -->
+```es6
 const stm = require('statetransition-mixin');
 
 const actions = stm.prepareActions({
@@ -115,7 +116,6 @@ console.log('starting == ${myObject.state}');
 
 myObject.stop().then( (o) => console.log('stopped == ${o.state}'));
 console.log('stopping == ${myObject.state}');
-
 ```
 
 install
