@@ -24,12 +24,12 @@
     "coveralls": "2.11.14",
     "cracks": "3.1.2",
     "cz-conventional-changelog": "1.2.0",
-    "markdown-doctest": "^0.8.1",
     "istanbul": "0.4.5",
     "jsdoc": "3.4.1",
+    "markdown-doctest": "^0.8.1",
     "mocha": "3.1.0",
-    "rollup": "^0.36.0",
-    "semantic-release": "6.3.0"
+    "rollup": "^0.36.1",
+    "semantic-release": "^6.3.1"
   },
   "keywords": [
     "state",
