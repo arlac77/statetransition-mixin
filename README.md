@@ -127,6 +127,148 @@ With [npm](http://npmjs.org) do:
 npm install statetransition-mixin
 ```
 
+# API Reference
+
+* <a name="illegalStateTransition"></a>
+
+## illegalStateTransition(action) ⇒ <code>Promise</code>
+Called when state transition action is not allowed
+
+**Kind**: global function  
+**Returns**: <code>Promise</code> - rejecting with an Error  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| action | <code>Object</code> | to be acted on |
+
+
+* <a name="stateTransitionRejection"></a>
+
+## stateTransitionRejection(rejected, newState) ⇒ <code>Promise</code>
+Called when the state transtion implementation promise rejects.
+Resets the transition
+
+**Kind**: global function  
+**Returns**: <code>Promise</code> - rejecting promise  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| rejected | <code>Object</code> | initiating error |
+| newState | <code>String</code> | final state of error |
+
+
+* <a name="timeoutForTransition"></a>
+
+## timeoutForTransition(transition) ⇒ <code>number</code>
+Called to get the timeout value for a given transition
+
+**Kind**: global function  
+**Returns**: <code>number</code> - timeout for the transition  
+
+| Param | Type |
+| --- | --- |
+| transition | <code>Object</code> | 
+
+
+* <a name="stateChanged"></a>
+
+## stateChanged(oldState, newState) ⇒ <code>void</code>
+To be overwritten
+Called when the state changes
+
+**Kind**: global function  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| oldState | <code>String</code> | previous state |
+| newState | <code>String</code> | new state |
+
+
+* <a name="defineActionMethods"></a>
+
+## defineActionMethods(object, actionsAndStates, enumerable) ⇒ <code>void</code>
+Defines methods to perfom the state transitions.
+States are traversed in the following way:
+current -> during -> final
+If the step is not in one of the transitions current
+states and also not already in the transitions final
+state a rejecting promise will be delivered from the
+generated function. In the 'during' state a function
+named '_' + <transitions name> (sample: '_start()')
+will be called first.
+It is expected that this function delivers a promise.
+Special handling of consequent transitions:
+While in a during state the former delivered promise will be
+delivered again. This enshures that several consequent
+transitions in a row will be fullfiled by the same promise.
+There can only be one transition in place at a given point in time.
+
+**Kind**: global function  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| object | <code>Object</code> |  | where we define the metods |
+| actionsAndStates | <code>Object</code> |  | object describing the state transitions |
+| enumerable | <code>Boolean</code> | <code>false</code> | should the action methods be enumerable defaults to false |
+
+
+* <a name="BaseMethods.illegalStateTransition"></a>
+
+## BaseMethods.illegalStateTransition(action) ⇒ <code>Promise</code>
+Called when state transition action is not allowed
+
+**Kind**: static method of <code>BaseMethods</code>  
+**Returns**: <code>Promise</code> - rejecting with an Error  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| action | <code>Object</code> | to be acted on |
+
+
+* <a name="BaseMethods.stateTransitionRejection"></a>
+
+## BaseMethods.stateTransitionRejection(rejected, newState) ⇒ <code>Promise</code>
+Called when the state transtion implementation promise rejects.
+Resets the transition
+
+**Kind**: static method of <code>BaseMethods</code>  
+**Returns**: <code>Promise</code> - rejecting promise  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| rejected | <code>Object</code> | initiating error |
+| newState | <code>String</code> | final state of error |
+
+
+* <a name="BaseMethods.timeoutForTransition"></a>
+
+## BaseMethods.timeoutForTransition(transition) ⇒ <code>number</code>
+Called to get the timeout value for a given transition
+
+**Kind**: static method of <code>BaseMethods</code>  
+**Returns**: <code>number</code> - timeout for the transition  
+
+| Param | Type |
+| --- | --- |
+| transition | <code>Object</code> | 
+
+
+* <a name="BaseMethods.stateChanged"></a>
+
+## BaseMethods.stateChanged(oldState, newState) ⇒ <code>void</code>
+To be overwritten
+Called when the state changes
+
+**Kind**: static method of <code>BaseMethods</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| oldState | <code>String</code> | previous state |
+| newState | <code>String</code> | new state |
+
+
+* * *
+
 license
 =======
 
