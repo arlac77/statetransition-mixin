@@ -117,6 +117,15 @@ myObject.stop().then( (o) => console.log('stopped == ${o.state}'));
 console.log('stopping == ${myObject.state}');
 ```
 
+# API Reference
+{{#modules~}}
+- {{name}}
+{{/modules}}
+
+{{#functions}}* {{>docs}}
+{{/functions}}
+* * *
+
 install
 =======
 
@@ -126,14 +135,6 @@ With [npm](http://npmjs.org) do:
 npm install statetransition-mixin
 ```
 
-# API Reference
-{{#modules~}}
-- {{name}}
-{{/modules}}
-
-{{#functions}}* {{>docs}}
-{{/functions}}
-* * *
 
 license
 =======

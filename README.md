@@ -117,15 +117,6 @@ myObject.stop().then( (o) => console.log('stopped == ${o.state}'));
 console.log('stopping == ${myObject.state}');
 ```
 
-install
-=======
-
-With [npm](http://npmjs.org) do:
-
-```
-npm install statetransition-mixin
-```
-
 # API Reference
 
 * <a name="illegalStateTransition"></a>
@@ -267,6 +258,16 @@ Called when the state changes
 
 
 * * *
+
+install
+=======
+
+With [npm](http://npmjs.org) do:
+
+```
+npm install statetransition-mixin
+```
+
 
 license
 =======
