@@ -3,7 +3,6 @@
   "version": "0.0.0-semantic-release",
   "description": "mixin to declare state transition methods like start & stop",
   "main": "dist/StateTransitionMixin.js",
-  "jsnext:main": "src/StateTransitionMixin.js",
   "module": "src/StateTransitionMixin.js",
   "scripts": {
     "cover": "npm run build && ./node_modules/istanbul/lib/cli.js cover --hook-run-in-context ./node_modules/mocha/bin/_mocha -- --R spec --U exports tests/*_test.js",
@@ -46,10 +45,8 @@
     }
   },
   "dependencies": {},
-  "contributors": [
-    {
-      "name": "Markus Felten",
-      "email": "markus.felten@gmx.de"
-    }
-  ]
+  "contributors": [{
+    "name": "Markus Felten",
+    "email": "markus.felten@gmx.de"
+  }]
 }
