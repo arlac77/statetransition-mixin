@@ -4,7 +4,7 @@
 
 'use strict';
 
-function prepareActions(as) {
+export function prepareActions(as) {
   const actions = {};
   const states = {};
 
@@ -60,10 +60,10 @@ function prepareActions(as) {
   return [actions, states];
 }
 
-const BaseMethods = {
+export const BaseMethods = {
   /**
    * Called when state transition action is not allowed
-   * @param {Object} action to be acted on
+   * @param {object} action to be acted on
    * @return {Promise} rejecting with an Error
    */
   illegalStateTransition(action) {
@@ -73,8 +73,8 @@ const BaseMethods = {
     /**
      * Called when the state transtion implementation promise rejects.
      * Resets the transition
-     * @param {Object} rejected initiating error
-     * @param {String} newState final state of error
+     * @param {object} rejected initiating error
+     * @param {string} newState final state of error
      * @return {Promise} rejecting promise
      */
     stateTransitionRejection(rejected, newState) {
@@ -86,7 +86,7 @@ const BaseMethods = {
 
     /**
      * Called to get the timeout value for a given transition
-     * @param {Object} transition
+     * @param {object} transition
      * @return {number} timeout for the transition
      */
     timeoutForTransition(transition) {
@@ -96,14 +96,14 @@ const BaseMethods = {
     /**
      * To be overwritten
      * Called when the state changes
-     * @param {String} oldState previous state
-     * @param {String} newState new state
-     * @return {void}
+     * @param {string} oldState previous state
+     * @param {string} newState new state
+     * @return {undefined}
      */
     stateChanged(oldState, newState) {}
 };
 
-function defineStateTransitionProperties(object, actions, currentState) {
+export function defineStateTransitionProperties(object, actions, currentState) {
 
   const properties = {};
 
@@ -128,7 +128,7 @@ function defineStateTransitionProperties(object, actions, currentState) {
   Object.defineProperties(object, properties);
 }
 
-function StateTransitionMixin(superclass, actions, currentState) {
+export function StateTransitionMixin(superclass, actions, currentState) {
   return class extends superclass {
     constructor() {
         super();
@@ -136,7 +136,7 @@ function StateTransitionMixin(superclass, actions, currentState) {
       }
       /**
        * Called when state transition action is not allowed
-       * @param {Object} action to be acted on
+       * @param {object} action to be acted on
        * @return {Promise} rejecting with an Error
        */
     illegalStateTransition(action) {
@@ -146,8 +146,8 @@ function StateTransitionMixin(superclass, actions, currentState) {
     /**
      * Called when the state transtion implementation promise rejects.
      * Resets the transition
-     * @param {Object} rejected initiating error
-     * @param {String} newState final state of error
+     * @param {object} rejected initiating error
+     * @param {string} newState final state of error
      * @return {Promise} rejecting promise
      */
     stateTransitionRejection(rejected, newState) {
@@ -160,7 +160,7 @@ function StateTransitionMixin(superclass, actions, currentState) {
 
     /**
      * Called to get the timeout value for a given transition
-     * @param {Object} transition
+     * @param {object} transition
      * @return {number} timeout for the transition
      */
     timeoutForTransition(transition) {
@@ -170,8 +170,8 @@ function StateTransitionMixin(superclass, actions, currentState) {
     /**
      * To be overwritten
      * Called when the state changes
-     * @param {String} oldState previous state
-     * @param {String} newState new state
+     * @param {string} oldState previous state
+     * @param {string} newState new state
      * @return {void}
      */
     stateChanged(oldState, newState) {}
@@ -224,12 +224,12 @@ function resolverPromise() {
  * delivered again. This enshures that several consequent
  * transitions in a row will be fullfiled by the same promise.
  * There can only be one transition in place at a given point in time.
- * @param {Object} object where we define the metods
- * @param {Object} actionsAndStates object describing the state transitions
- * @param {Boolean} enumerable should the action methods be enumerable defaults to false
- * @return {void}
+ * @param {object} object where we define the metods
+ * @param {object} actionsAndStates object describing the state transitions
+ * @param {boolean} enumerable should the action methods be enumerable defaults to false
+ * @return {undefined}
  */
-function defineActionMethods(object, actionsAndStates, enumerable = false) {
+export function defineActionMethods(object, actionsAndStates, enumerable = false) {
   const actions = actionsAndStates[0];
   const states = actionsAndStates[1];
 
@@ -308,12 +308,3 @@ function defineActionMethods(object, actionsAndStates, enumerable = false) {
     Object.defineProperty(object, actionName, defaultProperties);
   });
 }
-
-
-export {
-  prepareActions,
-  BaseMethods,
-  defineStateTransitionProperties,
-  defineActionMethods,
-  StateTransitionMixin
-};
