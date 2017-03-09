@@ -7,6 +7,7 @@
 [![Code Climate](https://codeclimate.com/github/arlac77/statetransition-mixin/badges/gpa.svg)](https://codeclimate.com/github/arlac77/statetransition-mixin)
 [![Known Vulnerabilities](https://snyk.io/test/github/arlac77/statetransition-mixin/badge.svg)](https://snyk.io/test/github/arlac77/statetransition-mixin)
 [![GitHub Issues](https://img.shields.io/github/issues/arlac77/statetransition-mixin.svg?style=flat-square)](https://github.com/arlac77/statetransition-mixin/issues)
+[![Stories in Ready](https://badge.waffle.io/arlac77/statetransition-mixin.svg?label=ready&title=Ready)](http://waffle.io/arlac77/statetransition-mixin)
 [![Dependency Status](https://david-dm.org/arlac77/statetransition-mixin.svg)](https://david-dm.org/arlac77/statetransition-mixin)
 [![devDependency Status](https://david-dm.org/arlac77/statetransition-mixin/dev-status.svg)](https://david-dm.org/arlac77/statetransition-mixin#info=devDependencies)
 [![docs](http://inch-ci.org/github/arlac77/statetransition-mixin.svg?branch=master)](http://inch-ci.org/github/arlac77/statetransition-mixin)
@@ -130,7 +131,7 @@ Called when state transition action is not allowed
 
 | Param | Type | Description |
 | --- | --- | --- |
-| action | <code>Object</code> | to be acted on |
+| action | <code>object</code> | to be acted on |
 
 
 * <a name="stateTransitionRejection"></a>
@@ -144,8 +145,8 @@ Resets the transition
 
 | Param | Type | Description |
 | --- | --- | --- |
-| rejected | <code>Object</code> | initiating error |
-| newState | <code>String</code> | final state of error |
+| rejected | <code>object</code> | initiating error |
+| newState | <code>string</code> | final state of error |
 
 
 * <a name="timeoutForTransition"></a>
@@ -158,7 +159,7 @@ Called to get the timeout value for a given transition
 
 | Param | Type |
 | --- | --- |
-| transition | <code>Object</code> | 
+| transition | <code>object</code> | 
 
 
 * <a name="stateChanged"></a>
@@ -171,13 +172,13 @@ Called when the state changes
 
 | Param | Type | Description |
 | --- | --- | --- |
-| oldState | <code>String</code> | previous state |
-| newState | <code>String</code> | new state |
+| oldState | <code>string</code> | previous state |
+| newState | <code>string</code> | new state |
 
 
 * <a name="defineActionMethods"></a>
 
-## defineActionMethods(object, actionsAndStates, enumerable) ⇒ <code>void</code>
+## defineActionMethods(object, actionsAndStates, enumerable) ⇒ <code>undefined</code>
 Defines methods to perfom the state transitions.
 States are traversed in the following way:
 current -> during -> final
@@ -196,11 +197,11 @@ There can only be one transition in place at a given point in time.
 
 **Kind**: global function  
 
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| object | <code>Object</code> |  | where we define the metods |
-| actionsAndStates | <code>Object</code> |  | object describing the state transitions |
-| enumerable | <code>Boolean</code> | <code>false</code> | should the action methods be enumerable defaults to false |
+| Param | Type | Description |
+| --- | --- | --- |
+| object | <code>object</code> | where we define the metods |
+| actionsAndStates | <code>object</code> | object describing the state transitions |
+| enumerable | <code>boolean</code> | should the action methods be enumerable defaults to false |
 
 
 * <a name="BaseMethods.illegalStateTransition"></a>
@@ -213,7 +214,7 @@ Called when state transition action is not allowed
 
 | Param | Type | Description |
 | --- | --- | --- |
-| action | <code>Object</code> | to be acted on |
+| action | <code>object</code> | to be acted on |
 
 
 * <a name="BaseMethods.stateTransitionRejection"></a>
@@ -227,8 +228,8 @@ Resets the transition
 
 | Param | Type | Description |
 | --- | --- | --- |
-| rejected | <code>Object</code> | initiating error |
-| newState | <code>String</code> | final state of error |
+| rejected | <code>object</code> | initiating error |
+| newState | <code>string</code> | final state of error |
 
 
 * <a name="BaseMethods.timeoutForTransition"></a>
@@ -241,12 +242,12 @@ Called to get the timeout value for a given transition
 
 | Param | Type |
 | --- | --- |
-| transition | <code>Object</code> | 
+| transition | <code>object</code> | 
 
 
 * <a name="BaseMethods.stateChanged"></a>
 
-## BaseMethods.stateChanged(oldState, newState) ⇒ <code>void</code>
+## BaseMethods.stateChanged(oldState, newState) ⇒ <code>undefined</code>
 To be overwritten
 Called when the state changes
 
@@ -254,8 +255,8 @@ Called when the state changes
 
 | Param | Type | Description |
 | --- | --- | --- |
-| oldState | <code>String</code> | previous state |
-| newState | <code>String</code> | new state |
+| oldState | <code>string</code> | previous state |
+| newState | <code>string</code> | new state |
 
 
 * * *
