@@ -1,41 +1,37 @@
 {
   "name": "statetransition-mixin",
-  "version": "0.0.0-semantic-release",
-  "description": "mixin to declare state transition methods like start & stop",
-  "main": "dist/StateTransitionMixin.js",
-  "module": "src/StateTransitionMixin.js",
   "scripts": {
+    "precover": "npm run prepublish",
     "cover": "nyc npm test",
-    "docs": "jsdoc2md -l off -t doc/README.hbs -f src/*.js >README.md",
-    "test": "mocha tests/*_test.js",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
-    "prepublish": "rollup --output=dist/StateTransitionMixin.js -c -- src/StateTransitionMixin.js",
     "pretest": "npm run prepublish",
+    "test": "mocha tests/*_test.js",
     "posttest": "markdown-doctest",
-    "precover": "npm run prepublish"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/arlac77/statetransition-mixin.git"
-  },
-  "engines": {
-    "node": ">=8.1.4"
+    "prepublish": "rollup --output=dist/index.js -c -- {{module}}",
+    "docs": "jsdoc2md -l off -t doc/README.hbs -f src/*.js >README.md",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "devDependencies": {
-    "chai": "^4.0.2",
-    "cracks": "3.1.2",
     "jsdoc-to-markdown": "^3.0.0",
     "markdown-doctest": "^0.9.1",
+    "chai": "^4.1.0",
     "mocha": "^3.4.2",
     "nyc": "^11.0.3",
     "rollup": "^0.45.1",
     "semantic-release": "^6.3.6"
   },
+  "engines": {
+    "node": ">=8.1.4"
+  },
+  "version": "0.0.0-semantic-release",
+  "description": "{{description}}",
+  "main": "dist/index.js",
   "keywords": [
-    "state",
-    "mixin"
+    "npm-package-template"
   ],
-  "license": "BSD-2-Clause",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arlac77/statetransition-mixin.git"
+  },
   "bugs": {
     "url": "https://github.com/arlac77/statetransition-mixin/issues"
   },
@@ -47,6 +43,7 @@
       "email": "markus.felten@gmx.de"
     }
   ],
+  "license": "BSD-2-Clause",
   "nyc": {
     "include": [
       "dist/**/*.js"
