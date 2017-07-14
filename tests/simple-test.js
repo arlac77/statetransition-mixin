@@ -1,15 +1,12 @@
-/* global describe, it, xit */
-/* jslint node: true, esnext: true */
+import test from 'ava';
 
-'use strict';
+import {
+  prepareActions,
+  StateTransitionMixin,
+  defineActionMethods
+} from '../dist/statetransition-mixin';
 
-const chai = require('chai'),
-  assert = chai.assert,
-  expect = chai.expect,
-  should = chai.should(),
-  stm = require('../dist/StateTransitionMixin');
-
-const actions = stm.prepareActions({
+const actions = prepareActions({
   start: {
     stopped: {
       target: 'running',
@@ -40,7 +37,11 @@ const actions = stm.prepareActions({
 
 class BaseClass {}
 
-class StatefullClass extends stm.StateTransitionMixin(BaseClass, actions, 'stopped') {
+class StatefullClass extends StateTransitionMixin(
+  BaseClass,
+  actions,
+  'stopped'
+) {
   constructor(startTime, shouldReject, shouldThrow) {
     super();
     this.startTime = startTime;
@@ -74,47 +75,47 @@ class StatefullClass extends stm.StateTransitionMixin(BaseClass, actions, 'stopp
   }
 }
 
-stm.defineActionMethods(StatefullClass.prototype, actions, true);
+defineActionMethods(StatefullClass.prototype, actions, true);
 
-describe('ES2015 class', () => checks((timeout, fail) => new StatefullClass(timeout, fail)));
+describe('ES2015 class', () =>
+  checks((timeout, fail) => new StatefullClass(timeout, fail)));
 
 describe('plain object', () =>
   checks((startTime, shouldReject, shouldThrow) => {
     const o = {
       stateChanged(oldState, newState) {
-          this._newState = newState;
-        },
+        this._newState = newState;
+      },
 
-        toString() {
-          return 'plain object';
-        },
+      toString() {
+        return 'plain object';
+      },
 
-        _start() {
-          if (startTime === 0) {
-            if (shouldReject) return Promise.reject(new Error('always reject'));
-            if (shouldThrow) throw new Error('always throw');
-          }
-
-          return new Promise((f, r) => {
-            setTimeout(() => {
-              if (shouldReject) {
-                r(Promise.reject(new Error('always reject')));
-              }
-              if (this.shouldThrow) {
-                throw new Error('always throw');
-              } else {
-                f(this);
-              }
-            }, startTime);
-          });
+      _start() {
+        if (startTime === 0) {
+          if (shouldReject) return Promise.reject(new Error('always reject'));
+          if (shouldThrow) throw new Error('always throw');
         }
+
+        return new Promise((f, r) => {
+          setTimeout(() => {
+            if (shouldReject) {
+              r(Promise.reject(new Error('always reject')));
+            }
+            if (this.shouldThrow) {
+              throw new Error('always throw');
+            } else {
+              f(this);
+            }
+          }, startTime);
+        });
+      }
     };
     stm.defineActionMethods(o, actions, true);
     stm.defineStateTransitionProperties(o, actions, 'stopped');
 
     return o;
-  })
-);
+  }));
 
 function checks(factory) {
   describe('states', () => {
@@ -178,10 +179,13 @@ function checks(factory) {
 
       assert.equal(o.state, 'starting');
 
-      o.start().then(() => {
-        assert.equal(o.state, 'running');
-        done();
-      }, done).catch(done);
+      o
+        .start()
+        .then(() => {
+          assert.equal(o.state, 'running');
+          done();
+        }, done)
+        .catch(done);
     });
 
     it('can be stopped while starting', done => {
@@ -191,23 +195,29 @@ function checks(factory) {
 
       assert.equal(o.state, 'starting');
 
-      o.stop().then(() => {
-        assert.equal(o.state, 'stopped');
-        done();
-      }, done).catch(done);
+      o
+        .stop()
+        .then(() => {
+          assert.equal(o.state, 'stopped');
+          done();
+        }, done)
+        .catch(done);
     });
 
     describe('failures', () => {
       it('illegal transition', done => {
         const o = factory(0, false, false);
         try {
-          o.swim().then(() => {
-            //console.log(`swimming ?`);
-          }).catch(e => {
-            //console.log(`swimming failed: ${e}`);
-            assert.ok(o.state);
-            done();
-          });
+          o
+            .swim()
+            .then(() => {
+              //console.log(`swimming ?`);
+            })
+            .catch(e => {
+              //console.log(`swimming failed: ${e}`);
+              assert.ok(o.state);
+              done();
+            });
         } catch (e) {
           //console.log(`error: ${e}`);
           done(e);
@@ -229,20 +239,26 @@ function checks(factory) {
         it(`handle ${name} while starting without timeout guard`, done => {
           const o = factory(0, true, false);
 
-          o.start().then(f => {}, r => {
-            assert.equal(o.state, 'failed_special');
-            done();
-          });
+          o.start().then(
+            f => {},
+            r => {
+              assert.equal(o.state, 'failed_special');
+              done();
+            }
+          );
         });
 
         it(`handle ${name} while starting with timeout guard`, done => {
           const o = factory(10, true, false);
 
-          o.start().then(f => {}, r => {
-            //console.log(`catch ${name} ${r}`);
-            assert.equal(o.state, 'failed_special');
-            done();
-          });
+          o.start().then(
+            f => {},
+            r => {
+              //console.log(`catch ${name} ${r}`);
+              assert.equal(o.state, 'failed_special');
+              done();
+            }
+          );
         });
       }
     });

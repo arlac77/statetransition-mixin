@@ -1,9 +1,3 @@
-/* jslint node: true, esnext: true */
-/* eslint-env es6 */
-/* eslint valid-jsdoc: 2 */
-
-'use strict';
-
 export function prepareActions(as) {
   const actions = {};
   const states = {};
@@ -16,7 +10,7 @@ export function prepareActions(as) {
       };
     }
 
-    if (transition) {
+    if (transition !== undefined) {
       states[name].transitions[transition.initial] = transition;
     }
   }
@@ -67,51 +61,52 @@ export const BaseMethods = {
    * @return {Promise} rejecting with an Error
    */
   illegalStateTransition(action) {
-      return Promise.reject(new Error(`Can't ${action.name} ${this} in ${this.state} state`));
-    },
+    return Promise.reject(
+      new Error(`Can't ${action.name} ${this} in ${this.state} state`)
+    );
+  },
 
-    /**
+  /**
      * Called when the state transtion implementation promise rejects.
      * Resets the transition
      * @param {object} rejected initiating error
      * @param {string} newState final state of error
      * @return {Promise} rejecting promise
      */
-    stateTransitionRejection(rejected, newState) {
-      this.state = newState;
-      this[TRANSITION_PROMISE_PROPERTY] = undefined;
-      this[TRANSITION_PROPERTY] = undefined;
-      return Promise.reject(rejected);
-    },
+  stateTransitionRejection(rejected, newState) {
+    this.state = newState;
+    this[TRANSITION_PROMISE_PROPERTY] = undefined;
+    this[TRANSITION_PROPERTY] = undefined;
+    return Promise.reject(rejected);
+  },
 
-    /**
+  /**
      * Called to get the timeout value for a given transition
      * @param {object} transition
      * @return {number} timeout for the transition
      */
-    timeoutForTransition(transition) {
-      return transition.timeout;
-    },
+  timeoutForTransition(transition) {
+    return transition.timeout;
+  },
 
-    /**
+  /**
      * To be overwritten
      * Called when the state changes
      * @param {string} oldState previous state
      * @param {string} newState new state
      * @return {undefined}
      */
-    stateChanged(oldState, newState) {}
+  stateChanged(oldState, newState) {}
 };
 
 export function defineStateTransitionProperties(object, actions, currentState) {
-
   const properties = {};
 
   properties.state = {
-    get: function () {
+    get: function() {
       return currentState;
     },
-    set: function (newState) {
+    set: function(newState) {
       if (newState !== currentState) {
         this.stateChanged(currentState, newState);
         currentState = newState;
@@ -138,14 +133,16 @@ export function StateTransitionMixin(superclass, actions, currentState) {
       super();
       this[STATE_PROPERTY] = currentState;
     }
-      
+
     /**
      * Called when state transition action is not allowed
      * @param {object} action to be acted on
      * @return {Promise} rejecting with an Error
      */
     illegalStateTransition(action) {
-      return Promise.reject(new Error(`Can't ${action.name} ${this} in ${this.state} state`));
+      return Promise.reject(
+        new Error(`Can't ${action.name} ${this} in ${this.state} state`)
+      );
     }
 
     /**
@@ -198,15 +195,21 @@ function rejectUnlessResolvedWithin(promise, timeout, name) {
   if (timeout === 0) return promise;
 
   return new Promise((fullfill, reject) => {
-    const th = setTimeout(() => reject(new Error(`${name} not resolved within ${timeout}ms`)), timeout);
+    const th = setTimeout(
+      () => reject(new Error(`${name} not resolved within ${timeout}ms`)),
+      timeout
+    );
 
-    return promise.then(fullfilled => {
-      clearTimeout(th);
-      fullfill(fullfilled);
-    }, rejected => {
-      clearTimeout(th);
-      reject(rejected);
-    });
+    return promise.then(
+      fullfilled => {
+        clearTimeout(th);
+        fullfill(fullfilled);
+      },
+      rejected => {
+        clearTimeout(th);
+        reject(rejected);
+      }
+    );
   });
 }
 
@@ -235,7 +238,11 @@ function resolverPromise() {
  * @param {boolean} enumerable should the action methods be enumerable defaults to false
  * @return {undefined}
  */
-export function defineActionMethods(object, [actions, states], enumerable = false) {
+export function defineActionMethods(
+  object,
+  [actions, states],
+  enumerable = false
+) {
   const defaultProperties = {};
 
   if (enumerable) {
@@ -251,7 +258,7 @@ export function defineActionMethods(object, [actions, states], enumerable = fals
       Object.defineProperty(object, privateActionName, defaultProperties);
     }
 
-    defaultProperties.value = function () {
+    defaultProperties.value = function() {
       // target state already reached
       if (this.state === action.target) {
         return Promise.resolve(this);
@@ -259,25 +266,31 @@ export function defineActionMethods(object, [actions, states], enumerable = fals
 
       // normal start we are in the initial state of the action
       if (action.initial[this.state]) {
-
         // some transition is ongoing
         if (this[TRANSITION_PROPERTY]) {
           const t = this[TRANSITION_PROPERTY];
 
           // we terminate it silently ?
           // then do what we originally wanted
-          return this.stateTransitionRejection(new Error(
-            `Terminate ${t.name} to prepare ${actionName}`), t.initial).
-          then(f => {}, r => {
-            return this[actionName]();
-          });
+          return this.stateTransitionRejection(
+            new Error(`Terminate ${t.name} to prepare ${actionName}`),
+            t.initial
+          ).then(
+            f => {},
+            r => {
+              return this[actionName]();
+            }
+          );
         }
 
         this[TRANSITION_PROPERTY] = action.initial[this.state];
         this.state = this[TRANSITION_PROPERTY].during;
 
-        this[TRANSITION_PROMISE_PROPERTY] = rejectUnlessResolvedWithin(this[privateActionName](), this.timeoutForTransition(
-          this[TRANSITION_PROPERTY]), this[TRANSITION_PROPERTY].name).then(
+        this[TRANSITION_PROMISE_PROPERTY] = rejectUnlessResolvedWithin(
+          this[privateActionName](),
+          this.timeoutForTransition(this[TRANSITION_PROPERTY]),
+          this[TRANSITION_PROPERTY].name
+        ).then(
           resolved => {
             if (!this[TRANSITION_PROPERTY]) {
               // here we end if we canceled a transtion
@@ -295,7 +308,12 @@ export function defineActionMethods(object, [actions, states], enumerable = fals
             this[TRANSITION_PROPERTY] = undefined;
 
             return this;
-          }, rejected => this.stateTransitionRejection(rejected, this[TRANSITION_PROPERTY] && this[TRANSITION_PROPERTY].rejected)
+          },
+          rejected =>
+            this.stateTransitionRejection(
+              rejected,
+              this[TRANSITION_PROPERTY] && this[TRANSITION_PROPERTY].rejected
+            )
         );
 
         return this[TRANSITION_PROMISE_PROPERTY];
