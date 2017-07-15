@@ -76,47 +76,52 @@ class StatefullClass extends StateTransitionMixin(
   }
 }
 
+function plainObject(startTime, shouldReject, shouldThrow) {
+  const o = {
+    stateChanged(oldState, newState) {
+      this._newState = newState;
+    },
+
+    toString() {
+      return 'plain object';
+    },
+
+    _start() {
+      if (startTime === 0) {
+        if (shouldReject) return Promise.reject(new Error('always reject'));
+        if (shouldThrow) throw new Error('always throw');
+      }
+
+      return new Promise((f, r) => {
+        setTimeout(() => {
+          if (shouldReject) {
+            r(Promise.reject(new Error('always reject')));
+          }
+          if (this.shouldThrow) {
+            throw new Error('always throw');
+          } else {
+            f(this);
+          }
+        }, startTime);
+      });
+    }
+  };
+  defineActionMethods(o, actions, true);
+  defineStateTransitionProperties(o, actions, 'stopped');
+
+  return o;
+}
+
 defineActionMethods(StatefullClass.prototype, actions, true);
 
-test('ES2015 class', t =>
+test('static ES2015 class', t =>
   staticChecks(t, (timeout, fail) => new StatefullClass(timeout, fail)));
 
-test('plain object', t =>
-  staticChecks(t, (startTime, shouldReject, shouldThrow) => {
-    const o = {
-      stateChanged(oldState, newState) {
-        this._newState = newState;
-      },
+test('dynamic ES2015 class', t =>
+  dynamicChecks(t, (timeout, fail) => new StatefullClass(timeout, fail)));
 
-      toString() {
-        return 'plain object';
-      },
-
-      _start() {
-        if (startTime === 0) {
-          if (shouldReject) return Promise.reject(new Error('always reject'));
-          if (shouldThrow) throw new Error('always throw');
-        }
-
-        return new Promise((f, r) => {
-          setTimeout(() => {
-            if (shouldReject) {
-              r(Promise.reject(new Error('always reject')));
-            }
-            if (this.shouldThrow) {
-              throw new Error('always throw');
-            } else {
-              f(this);
-            }
-          }, startTime);
-        });
-      }
-    };
-    defineActionMethods(o, actions, true);
-    defineStateTransitionProperties(o, actions, 'stopped');
-
-    return o;
-  }));
+test('static plain object', t => staticChecks(t, plainObject));
+test('dynamic plain object', t => dynamicChecks(t, plainObject));
 
 function staticChecks(t, factory) {
   const o = factory(10, false);
@@ -133,73 +138,43 @@ function staticChecks(t, factory) {
   // defined methods are enumerable'
   const assigend = Object.assign({}, StatefullClass.prototype);
   t.truthy(assigend.start);
+}
 
-  /*
-  describe('states', () => {
-    describe('start-stop', () => {
-      const o = factory(10, false);
+async function dynamicChecks(t, factory) {
+  const o = factory(10, false);
 
-      it('can be started', done => {
-        o.start().then(() => {
-          assert.equal(o.state, 'running');
-          done();
-        }, done);
-      });
+  await o.start();
 
-      it('has stateChanged called', done => {
-        o.start().then(() => {
-          assert.equal(o._newState, 'running');
-          done();
-        }, done);
-      });
+  t.is(o.state, 'running');
 
-      it('can be started while running', done => {
-        o.start().then(() => {
-          assert.equal(o.state, 'running');
-          done();
-        }, done);
-      });
+  // has stateChanged called
+  t.is(o._newState, 'running');
 
-      it('and stoped', done => {
-        o.stop().then(() => {
-          assert.equal(o.state, 'stopped');
-          done();
-        }, done);
-      });
-    });
+  // can be started while running
+  await o.start();
+  t.is(o.state, 'running');
 
-    it('can be started while starting', done => {
-      const o = factory(10, false);
+  // and stoped
+  await o.stop();
 
-      o.start().then(() => {});
+  t.is(o.state, 'stopped');
 
-      assert.equal(o.state, 'starting');
+  // can be started while starting
+  const o2 = factory(10, false);
+  o2.start();
+  t.is(o2.state, 'starting');
+  await o2.start();
+  t.is(o2.state, 'running');
 
-      o
-        .start()
-        .then(() => {
-          assert.equal(o.state, 'running');
-          done();
-        }, done)
-        .catch(done);
-    });
+  // can be stopped while starting
+  const o3 = factory(100, false);
+  o3.start();
+  t.is(o3.state, 'starting');
+  await o3.stop();
+  t.is(o3.state, 'stopped');
+}
 
-    it('can be stopped while starting', done => {
-      const o = factory(100, false);
-
-      o.start().then(() => {});
-
-      assert.equal(o.state, 'starting');
-
-      o
-        .stop()
-        .then(() => {
-          assert.equal(o.state, 'stopped');
-          done();
-        }, done)
-        .catch(done);
-    });
-
+/*
     describe('failures', () => {
       it('illegal transition', done => {
         const o = factory(0, false, false);
@@ -260,4 +235,3 @@ function staticChecks(t, factory) {
     });
   });
   */
-}
