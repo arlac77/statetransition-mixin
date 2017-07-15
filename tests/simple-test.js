@@ -3,8 +3,9 @@ import test from 'ava';
 import {
   prepareActions,
   StateTransitionMixin,
-  defineActionMethods
-} from '../dist/statetransition-mixin';
+  defineActionMethods,
+  defineStateTransitionProperties
+} from '../src/statetransition-mixin';
 
 const actions = prepareActions({
   start: {
@@ -77,11 +78,11 @@ class StatefullClass extends StateTransitionMixin(
 
 defineActionMethods(StatefullClass.prototype, actions, true);
 
-describe('ES2015 class', () =>
-  checks((timeout, fail) => new StatefullClass(timeout, fail)));
+test('ES2015 class', t =>
+  checks(t, (timeout, fail) => new StatefullClass(timeout, fail)));
 
-describe('plain object', () =>
-  checks((startTime, shouldReject, shouldThrow) => {
+test('plain object', t =>
+  checks(t, (startTime, shouldReject, shouldThrow) => {
     const o = {
       stateChanged(oldState, newState) {
         this._newState = newState;
@@ -111,35 +112,30 @@ describe('plain object', () =>
         });
       }
     };
-    stm.defineActionMethods(o, actions, true);
-    stm.defineStateTransitionProperties(o, actions, 'stopped');
+    defineActionMethods(o, actions, true);
+    defineStateTransitionProperties(o, actions, 'stopped');
 
     return o;
   }));
 
-function checks(factory) {
+function checks(t, factory) {
+  const o = factory(10, false);
+
+  o.state = 'stopped';
+  t.is(o.state, 'stopped');
+
+  // has action methods'
+  t.truthy(o.stop);
+  t.truthy(o.start);
+  t.truthy(o._start);
+  t.truthy(o._stop);
+
+  // defined methods are enumerable'
+  const assigend = Object.assign({}, StatefullClass.prototype);
+  t.truthy(assigend.start);
+
+  /*
   describe('states', () => {
-    describe('static', () => {
-      const o = factory(10, false);
-
-      it('has initial state', () => {
-        o.state = 'stopped';
-        assert.equal(o.state, 'stopped');
-      });
-
-      it('has action methods', () => {
-        assert.isDefined(o.stop);
-        assert.isDefined(o.start);
-        assert.isDefined(o._start);
-        assert.isDefined(o._stop);
-      });
-
-      it('defined methods are enumerable', () => {
-        const assigend = Object.assign({}, StatefullClass.prototype);
-        assert.isDefined(assigend.start);
-      });
-    });
-
     describe('start-stop', () => {
       const o = factory(10, false);
 
@@ -263,4 +259,5 @@ function checks(factory) {
       }
     });
   });
+  */
 }
