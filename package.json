@@ -2,17 +2,17 @@
   "name": "statetransition-mixin",
   "version": "0.0.0-semantic-release",
   "description": "mixin to declare state transition methods like start & stop",
-  "main": "dist/StateTransitionMixin.js",
-  "module": "src/StateTransitionMixin.js",
+  "main": "dist/statetransition-mixin.js",
+  "module": "src/statetransition-mixin.js",
   "scripts": {
-    "cover": "nyc npm test",
-    "docs": "jsdoc2md -l off -t doc/README.hbs -f src/*.js >README.md",
-    "test": "mocha tests/*_test.js",
+    "cover": "nyc ava",
+    "docs": "jsdoc2md --configure doc/jsdoc.json -l off -t doc/README.hbs -f src/*.js >README.md",
+    "test": "ava",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post",
-    "prepublish": "rollup --output=dist/StateTransitionMixin.js -c -- src/StateTransitionMixin.js",
-    "pretest": "npm run prepublish",
-    "posttest": "markdown-doctest",
-    "precover": "npm run prepublish"
+    "pretest": "rollup -c tests/rollup.config.js",
+    "posttest": "npm run prepare && markdown-doctest",
+    "precover": "rollup -c tests/rollup.config.js",
+    "prepare": "rollup -c -- src/statetransition-mixin.js"
   },
   "repository": {
     "type": "git",
@@ -22,14 +22,18 @@
     "node": ">=8.1.4"
   },
   "devDependencies": {
-    "chai": "^4.1.0",
     "cracks": "3.1.2",
     "jsdoc-to-markdown": "^3.0.0",
     "markdown-doctest": "^0.9.1",
-    "mocha": "^3.4.2",
     "nyc": "^11.0.3",
     "rollup": "^0.45.2",
-    "semantic-release": "^6.3.6"
+    "semantic-release": "^6.3.6",
+    "jsdoc-babel": "^0.3.0",
+    "ava": "^0.21.0",
+    "rollup-plugin-babel": "^2.7.1",
+    "rollup-plugin-multi-entry": "^2.0.1",
+    "babel-preset-stage-3": "^6.24.1",
+    "xo": "^0.19.0"
   },
   "keywords": [
     "state",
@@ -47,18 +51,30 @@
       "email": "markus.felten@gmx.de"
     }
   ],
+  "template": {
+    "repository": {
+      "url": "https://github.com/arlac77/npm-package-template.git"
+    }
+  },
+  "xo": {
+    "space": true
+  },
   "nyc": {
     "include": [
-      "dist/**/*.js"
+      "build/test-bundle.js",
+      "src/**/*.js"
     ],
     "reporter": [
       "lcov"
     ],
-    "report-dir": "./coverage"
+    "report-dir": "./build/coverage"
   },
-  "template": {
-    "repository": {
-      "url": "https://github.com/Kronos-Tools/npm-package-template.git"
-    }
+  "ava": {
+    "files": [
+      "build/test-bundle.js"
+    ],
+    "require": [
+      "babel-register"
+    ]
   }
 }
