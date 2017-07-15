@@ -119,9 +119,15 @@ test('static ES2015 class', t =>
 
 test('dynamic ES2015 class', t =>
   dynamicChecks(t, (timeout, fail) => new StatefullClass(timeout, fail)));
+test('dynamic failure ES2015 class', t =>
+  dynamicFailureChecks(
+    t,
+    (timeout, fail) => new StatefullClass(timeout, fail)
+  ));
 
 test('static plain object', t => staticChecks(t, plainObject));
 test('dynamic plain object', t => dynamicChecks(t, plainObject));
+test('dynamic failure plain object', t => dynamicFailureChecks(t, plainObject));
 
 function staticChecks(t, factory) {
   const o = factory(10, false);
@@ -174,35 +180,27 @@ async function dynamicChecks(t, factory) {
   t.is(o3.state, 'stopped');
 }
 
+async function dynamicFailureChecks(t, factory) {
+  const o = factory(0, false, false);
+
+  // illegal transition
+  try {
+    await o.swim();
+  } catch (error) {
+    t.truthy(error.message.match(/in stopped state/));
+  }
+
+  // handle timeout while starting
+  const o2 = factory(1000, false, false);
+  try {
+    await o2.start();
+  } catch (error) {
+    //t.is(o.state, 'failed_special');
+    t.truthy(error.message.match(/running not resolved within 200ms/));
+  }
+}
+
 /*
-    describe('failures', () => {
-      it('illegal transition', done => {
-        const o = factory(0, false, false);
-        try {
-          o
-            .swim()
-            .then(() => {
-              //console.log(`swimming ?`);
-            })
-            .catch(e => {
-              //console.log(`swimming failed: ${e}`);
-              assert.ok(o.state);
-              done();
-            });
-        } catch (e) {
-          //console.log(`error: ${e}`);
-          done(e);
-        }
-      });
-
-      it('handle timeout while starting', done => {
-        const o = factory(1000, false, false);
-        o.start().then(() => {}).catch(e => {
-          assert.equal(o.state, 'failed_special');
-          done();
-        });
-      });
-
       checkFailure('failure (reject)', true, false);
       checkFailure('failure (throw)', false, true);
 
