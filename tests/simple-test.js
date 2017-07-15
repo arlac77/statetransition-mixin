@@ -79,10 +79,10 @@ class StatefullClass extends StateTransitionMixin(
 defineActionMethods(StatefullClass.prototype, actions, true);
 
 test('ES2015 class', t =>
-  checks(t, (timeout, fail) => new StatefullClass(timeout, fail)));
+  staticChecks(t, (timeout, fail) => new StatefullClass(timeout, fail)));
 
 test('plain object', t =>
-  checks(t, (startTime, shouldReject, shouldThrow) => {
+  staticChecks(t, (startTime, shouldReject, shouldThrow) => {
     const o = {
       stateChanged(oldState, newState) {
         this._newState = newState;
@@ -118,7 +118,7 @@ test('plain object', t =>
     return o;
   }));
 
-function checks(t, factory) {
+function staticChecks(t, factory) {
   const o = factory(10, false);
 
   o.state = 'stopped';
