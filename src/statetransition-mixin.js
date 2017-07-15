@@ -1,11 +1,15 @@
+const STATE_PROPERTY = Symbol('state');
+const TRANSITION_PROPERTY = Symbol('transition');
+const TRANSITION_PROMISE_PROPERTY = Symbol('transitionPromise');
+
 export function prepareActions(as) {
   const actions = {};
   const states = {};
 
   function addState(name, transition) {
-    if (!states[name]) {
+    if (states[name] === undefined) {
       states[name] = {
-        name: name,
+        name,
         transitions: {}
       };
     }
@@ -24,7 +28,7 @@ export function prepareActions(as) {
     Object.keys(a).forEach(initialState => {
       const t = a[initialState];
 
-      if (!t.rejected) {
+      if (t.rejected === undefined) {
         t.rejected = 'failed';
       }
 
@@ -42,14 +46,9 @@ export function prepareActions(as) {
       name: actionName,
       initial: initialTransitions,
       during: duringTransitions,
-      target: target
+      target
     };
   });
-
-  /*
-    console.log(`${JSON.stringify(actions,undefined,1)}`);
-    console.log(`${JSON.stringify(states,undefined,1)}`);
-  */
 
   return [actions, states];
 }
@@ -96,17 +95,17 @@ export const BaseMethods = {
      * @param {string} newState new state
      * @return {undefined}
      */
-  stateChanged(oldState, newState) {}
+  stateChanged() {}
 };
 
 export function defineStateTransitionProperties(object, actions, currentState) {
   const properties = {};
 
   properties.state = {
-    get: function() {
+    get() {
       return currentState;
     },
-    set: function(newState) {
+    set(newState) {
       if (newState !== currentState) {
         this.stateChanged(currentState, newState);
         currentState = newState;
@@ -122,10 +121,6 @@ export function defineStateTransitionProperties(object, actions, currentState) {
 
   Object.defineProperties(object, properties);
 }
-
-const STATE_PROPERTY = Symbol('state');
-const TRANSITION_PROPERTY = Symbol('transition');
-const TRANSITION_PROMISE_PROPERTY = Symbol('transitionPromise');
 
 export function StateTransitionMixin(superclass, actions, currentState) {
   return class extends superclass {
@@ -176,7 +171,7 @@ export function StateTransitionMixin(superclass, actions, currentState) {
      * @param {string} newState new state
      * @return {void}
      */
-    stateChanged(oldState, newState) {}
+    stateChanged() {}
 
     get state() {
       return this[STATE_PROPERTY];
@@ -192,9 +187,11 @@ export function StateTransitionMixin(superclass, actions, currentState) {
 }
 
 function rejectUnlessResolvedWithin(promise, timeout, name) {
-  if (timeout === 0) return promise;
+  if (timeout === 0) {
+    return promise;
+  }
 
-  return new Promise((fullfill, reject) => {
+  return new Promise((resolve, reject) => {
     const th = setTimeout(
       () => reject(new Error(`${name} not resolved within ${timeout}ms`)),
       timeout
@@ -203,7 +200,7 @@ function rejectUnlessResolvedWithin(promise, timeout, name) {
     return promise.then(
       fullfilled => {
         clearTimeout(th);
-        fullfill(fullfilled);
+        resolve(fullfilled);
       },
       rejected => {
         clearTimeout(th);
@@ -275,12 +272,7 @@ export function defineActionMethods(
           return this.stateTransitionRejection(
             new Error(`Terminate ${t.name} to prepare ${actionName}`),
             t.initial
-          ).then(
-            f => {},
-            r => {
-              return this[actionName]();
-            }
-          );
+          ).then(() => {}, () => this[actionName]());
         }
 
         this[TRANSITION_PROPERTY] = action.initial[this.state];
@@ -291,7 +283,7 @@ export function defineActionMethods(
           this.timeoutForTransition(this[TRANSITION_PROPERTY]),
           this[TRANSITION_PROPERTY].name
         ).then(
-          resolved => {
+          () => {
             if (!this[TRANSITION_PROPERTY]) {
               // here we end if we canceled a transtion
               // need some better ideas to communicate
