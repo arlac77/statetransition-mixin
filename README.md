@@ -122,64 +122,9 @@ console.log('stopping == ${myObject.state}');
 
 # API Reference
 
-* <a name="illegalStateTransition"></a>
-
-## illegalStateTransition(action) ⇒ <code>Promise</code>
-Called when state transition action is not allowed
-
-**Kind**: global function  
-**Returns**: <code>Promise</code> - rejecting with an Error  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| action | <code>object</code> | to be acted on |
-
-
-* <a name="stateTransitionRejection"></a>
-
-## stateTransitionRejection(rejected, newState) ⇒ <code>Promise</code>
-Called when the state transtion implementation promise rejects.
-Resets the transition
-
-**Kind**: global function  
-**Returns**: <code>Promise</code> - rejecting promise  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| rejected | <code>object</code> | initiating error |
-| newState | <code>string</code> | final state of error |
-
-
-* <a name="timeoutForTransition"></a>
-
-## timeoutForTransition(transition) ⇒ <code>number</code>
-Called to get the timeout value for a given transition
-
-**Kind**: global function  
-**Returns**: <code>number</code> - timeout for the transition  
-
-| Param | Type |
-| --- | --- |
-| transition | <code>object</code> | 
-
-
-* <a name="stateChanged"></a>
-
-## stateChanged(oldState, newState) ⇒ <code>void</code>
-To be overwritten
-Called when the state changes
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| oldState | <code>string</code> | previous state |
-| newState | <code>string</code> | new state |
-
-
 * <a name="defineActionMethods"></a>
 
-## defineActionMethods(object, actionsAndStates, enumerable) ⇒ <code>undefined</code>
+## defineActionMethods(object, actionsAndStates, enumerable) ⇒ <code>void</code>
 Defines methods to perfom the state transitions.
 States are traversed in the following way:
 current -> during -> final
@@ -241,14 +186,14 @@ Called to get the timeout value for a given transition
 **Kind**: static method of <code>BaseMethods</code>  
 **Returns**: <code>number</code> - timeout for the transition  
 
-| Param | Type |
-| --- | --- |
-| transition | <code>object</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| transition | <code>object</code> | the transition |
 
 
 * <a name="BaseMethods.stateChanged"></a>
 
-## BaseMethods.stateChanged(oldState, newState) ⇒ <code>undefined</code>
+## BaseMethods.stateChanged(oldState, newState) ⇒ <code>void</code>
 To be overwritten
 Called when the state changes
 

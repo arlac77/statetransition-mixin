@@ -56,7 +56,7 @@ export function prepareActions(as) {
 export const BaseMethods = {
   /**
    * Called when state transition action is not allowed
-   * @param {object} action to be acted on
+   * @param action {object} to be acted on
    * @return {Promise} rejecting with an Error
    */
   illegalStateTransition(action) {
@@ -68,8 +68,8 @@ export const BaseMethods = {
   /**
      * Called when the state transtion implementation promise rejects.
      * Resets the transition
-     * @param {object} rejected initiating error
-     * @param {string} newState final state of error
+     * @param rejected {object} initiating error
+     * @param newState {string} final state of error
      * @return {Promise} rejecting promise
      */
   stateTransitionRejection(rejected, newState) {
@@ -81,7 +81,7 @@ export const BaseMethods = {
 
   /**
      * Called to get the timeout value for a given transition
-     * @param {object} transition
+     * @param transition {object} the transition
      * @return {number} timeout for the transition
      */
   timeoutForTransition(transition) {
@@ -91,9 +91,9 @@ export const BaseMethods = {
   /**
      * To be overwritten
      * Called when the state changes
-     * @param {string} oldState previous state
-     * @param {string} newState new state
-     * @return {undefined}
+     * @param oldState {string} previous state
+     * @param newState {string} new state
+     * @return {void}
      */
   stateChanged() {}
 };
@@ -131,7 +131,7 @@ export function StateTransitionMixin(superclass, actions, currentState) {
 
     /**
      * Called when state transition action is not allowed
-     * @param {object} action to be acted on
+     * @param action {object} to be acted on
      * @return {Promise} rejecting with an Error
      */
     illegalStateTransition(action) {
@@ -143,8 +143,8 @@ export function StateTransitionMixin(superclass, actions, currentState) {
     /**
      * Called when the state transtion implementation promise rejects.
      * Resets the transition
-     * @param {object} rejected initiating error
-     * @param {string} newState final state of error
+     * @param rejected {object} initiating error
+     * @param newState {string} final state of error
      * @return {Promise} rejecting promise
      */
     stateTransitionRejection(rejected, newState) {
@@ -157,7 +157,7 @@ export function StateTransitionMixin(superclass, actions, currentState) {
 
     /**
      * Called to get the timeout value for a given transition
-     * @param {object} transition
+     * @param transition {object} transtion to deliver timout value for
      * @return {number} timeout for the transition
      */
     timeoutForTransition(transition) {
@@ -167,8 +167,8 @@ export function StateTransitionMixin(superclass, actions, currentState) {
     /**
      * To be overwritten
      * Called when the state changes
-     * @param {string} oldState previous state
-     * @param {string} newState new state
+     * @param oldState {string} previous state
+     * @param newState {string} new state
      * @return {void}
      */
     stateChanged() {}
@@ -230,10 +230,10 @@ function resolverPromise() {
  * delivered again. This enshures that several consequent
  * transitions in a row will be fullfiled by the same promise.
  * There can only be one transition in place at a given point in time.
- * @param {object} object where we define the metods
- * @param {object} actionsAndStates object describing the state transitions
- * @param {boolean} enumerable should the action methods be enumerable defaults to false
- * @return {undefined}
+ * @param object {object} where we define the metods
+ * @param actionsAndStates {object} object describing the state transitions
+ * @param enumerable {boolean} should the action methods be enumerable defaults to false
+ * @return {void}
  */
 export function defineActionMethods(
   object,
