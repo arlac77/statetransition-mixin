@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/arlac77/statetransition-mixin.git"
+    "url": "git+https://github.com/arlac77/statetransition-mixin.git"
   },
   "engines": {
     "node": ">=8.3.0"
@@ -26,7 +26,7 @@
     "jsdoc-to-markdown": "^3.0.0",
     "markdown-doctest": "^0.9.1",
     "nyc": "^11.1.0",
-    "rollup": "^0.47.0",
+    "rollup": "^0.47.2",
     "semantic-release": "^6.3.6",
     "jsdoc-babel": "^0.3.0",
     "ava": "^0.21.0",
