@@ -2,12 +2,11 @@ import babel from 'rollup-plugin-babel';
 import pkg from './package.json';
 
 export default {
-  targets: [
-    {
-      dest: pkg.main,
-      format: 'cjs'
-    }
-  ],
+  output: {
+    file: pkg.main,
+    format: 'cjs'
+  },
+
   plugins: [
     babel({
       babelrc: false,
@@ -15,5 +14,7 @@ export default {
       plugins: [],
       exclude: 'node_modules/**'
     })
-  ]
+  ],
+
+  input: pkg.module
 };
