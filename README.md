@@ -12,6 +12,7 @@
 [![Dependency Status](https://david-dm.org/arlac77/statetransition-mixin.svg)](https://david-dm.org/arlac77/statetransition-mixin)
 [![devDependency Status](https://david-dm.org/arlac77/statetransition-mixin/dev-status.svg)](https://david-dm.org/arlac77/statetransition-mixin#info=devDependencies)
 [![docs](http://inch-ci.org/github/arlac77/statetransition-mixin.svg?branch=master)](http://inch-ci.org/github/arlac77/statetransition-mixin)
+[![XO code style](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/sindresorhus/xo)
 [![downloads](http://img.shields.io/npm/dm/statetransition-mixin.svg?style=flat-square)](https://npmjs.org/package/statetransition-mixin)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
