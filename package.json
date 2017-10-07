@@ -58,7 +58,7 @@
   },
   "nyc": {
     "include": [
-      "build/test-bundle.js",
+      "build/*-test.js",
       "src/**/*.js"
     ],
     "reporter": [
@@ -68,7 +68,7 @@
   },
   "ava": {
     "files": [
-      "build/test-bundle.js"
+      "build/*-test.js"
     ],
     "require": [
       "babel-register"
