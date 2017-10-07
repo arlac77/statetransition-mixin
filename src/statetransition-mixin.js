@@ -123,9 +123,9 @@ export function defineStateTransitionProperties(object, actions, currentState) {
 }
 
 export function StateTransitionMixin(superclass, actions, currentState) {
-  return class extends superclass {
-    constructor() {
-      super();
+  const newClass = class extends superclass {
+    constructor(...args) {
+      super(...args);
       this[STATE_PROPERTY] = currentState;
     }
 
@@ -184,6 +184,9 @@ export function StateTransitionMixin(superclass, actions, currentState) {
       }
     }
   };
+
+  defineActionMethods(newClass.prototype, actions, true);
+  return newClass;
 }
 
 function rejectUnlessResolvedWithin(promise, timeout, name) {
