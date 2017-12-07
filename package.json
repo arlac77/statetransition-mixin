@@ -19,7 +19,7 @@
     "url": "git+https://github.com/arlac77/statetransition-mixin.git"
   },
   "engines": {
-    "node": ">=8.9.1"
+    "node": ">=8.9.2"
   },
   "devDependencies": {
     "jsdoc-to-markdown": "^3.0.2",
