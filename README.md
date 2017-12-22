@@ -126,13 +126,18 @@ console.log('stopping == ${myObject.state}');
 
 ### Table of Contents
 
--   [illegalStateTransition](#illegalstatetransition)
--   [stateTransitionRejection](#statetransitionrejection)
--   [timeoutForTransition](#timeoutfortransition)
--   [stateChanged](#statechanged)
+-   [BaseMethods](#basemethods)
+    -   [illegalStateTransition](#illegalstatetransition)
+    -   [stateTransitionRejection](#statetransitionrejection)
+    -   [timeoutForTransition](#timeoutfortransition)
+    -   [stateChanged](#statechanged)
 -   [defineActionMethods](#defineactionmethods)
 
-## illegalStateTransition
+## BaseMethods
+
+all methods provided in the mixin
+
+### illegalStateTransition
 
 Called when state transition action is not allowed
 
@@ -142,7 +147,7 @@ Called when state transition action is not allowed
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** rejecting with an Error
 
-## stateTransitionRejection
+### stateTransitionRejection
 
 Called when the state transtion implementation promise rejects.
 Resets the transition
@@ -154,7 +159,7 @@ Resets the transition
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** rejecting promise
 
-## timeoutForTransition
+### timeoutForTransition
 
 Called to get the timeout value for a given transition
 
@@ -164,7 +169,7 @@ Called to get the timeout value for a given transition
 
 Returns **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** timeout for the transition
 
-## stateChanged
+### stateChanged
 
 To be overwritten
 Called when the state changes

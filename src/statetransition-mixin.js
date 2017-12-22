@@ -53,6 +53,9 @@ export function prepareActions(as) {
   return [actions, states];
 }
 
+/**
+ * all methods provided in the mixin
+ */
 export const BaseMethods = {
   /**
    * Called when state transition action is not allowed
@@ -95,7 +98,7 @@ export const BaseMethods = {
    * @param {string} newState new state
    * @return {void}
    */
-  stateChanged() {}
+  stateChanged(oldState, newState) {}
 };
 
 export function defineStateTransitionProperties(object, actions, currentState) {
