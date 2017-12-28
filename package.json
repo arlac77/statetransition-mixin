@@ -1,9 +1,20 @@
 {
   "name": "statetransition-mixin",
   "version": "0.0.0-semantic-release",
-  "description": "mixin to declare state transition methods like start & stop",
   "main": "dist/statetransition-mixin.js",
   "module": "src/statetransition-mixin.js",
+  "description": "mixin to declare state transition methods like start & stop",
+  "keywords": [
+    "state",
+    "mixin"
+  ],
+  "contributors": [
+    {
+      "name": "Markus Felten",
+      "email": "markus.felten@gmx.de"
+    }
+  ],
+  "license": "BSD-2-Clause",
   "scripts": {
     "cover": "nyc --temp-directory build/nyc ava",
     "docs": "documentation readme src/statetransition-mixin.js --section=API",
@@ -15,13 +26,7 @@
     "prepare": "rollup -c",
     "lint": "documentation lint src/statetransition-mixin.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/arlac77/statetransition-mixin.git"
-  },
-  "engines": {
-    "node": ">=8.9.3"
-  },
+  "dependencies": {},
   "devDependencies": {
     "markdown-doctest": "^0.9.1",
     "nyc": "^11.4.1",
@@ -31,29 +36,24 @@
     "xo": "^0.19.0",
     "documentation": "^5.3.5"
   },
-  "keywords": [
-    "state",
-    "mixin"
-  ],
-  "license": "BSD-2-Clause",
+  "engines": {
+    "node": ">=8.9.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arlac77/statetransition-mixin.git"
+  },
   "bugs": {
     "url": "https://github.com/arlac77/statetransition-mixin/issues"
   },
   "homepage": "https://github.com/arlac77/statetransition-mixin#readme",
-  "dependencies": {},
-  "contributors": [
-    {
-      "name": "Markus Felten",
-      "email": "markus.felten@gmx.de"
-    }
-  ],
-  "template": {
-    "repository": {
-      "url": "https://github.com/arlac77/npm-package-template.git"
-    }
-  },
-  "xo": {
-    "space": true
+  "ava": {
+    "files": [
+      "build/*-test.js"
+    ],
+    "require": [
+      "babel-register"
+    ]
   },
   "nyc": {
     "include": [
@@ -65,12 +65,12 @@
     ],
     "report-dir": "./build/coverage"
   },
-  "ava": {
-    "files": [
-      "build/*-test.js"
-    ],
-    "require": [
-      "babel-register"
-    ]
+  "xo": {
+    "space": true
+  },
+  "template": {
+    "repository": {
+      "url": "https://github.com/arlac77/npm-package-template.git"
+    }
   }
 }
