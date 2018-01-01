@@ -126,12 +126,35 @@ console.log('stopping == ${myObject.state}');
 
 ### Table of Contents
 
+-   [Action](#action)
+-   [Transition](#transition)
 -   [BaseMethods](#basemethods)
     -   [illegalStateTransition](#illegalstatetransition)
     -   [stateTransitionRejection](#statetransitionrejection)
     -   [timeoutForTransition](#timeoutfortransition)
     -   [stateChanged](#statechanged)
+-   [StateTransitionMixin](#statetransitionmixin)
 -   [defineActionMethods](#defineactionmethods)
+
+## Action
+
+Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
+
+**Properties**
+
+-   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+-   `transitions` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 
+
+## Transition
+
+Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
+
+**Properties**
+
+-   `initial` **[Transition](#transition)** 
+-   `during` **[Transition](#transition)** 
+-   `target` **[Transition](#transition)** 
+-   `rejected` **[Transition](#transition)** 
 
 ## BaseMethods
 
@@ -143,9 +166,10 @@ Called when state transition action is not allowed
 
 **Parameters**
 
--   `action` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** to be acted on
+-   `action` **[Action](#action)** to be acted on
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** rejecting with an Error
+
+-   Throws **any** always Error indicating that the given state transition is not allowed
 
 ### stateTransitionRejection
 
@@ -165,9 +189,9 @@ Called to get the timeout value for a given transition
 
 **Parameters**
 
--   `transition` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** the transition
+-   `transition` **[Transition](#transition)** the transition
 
-Returns **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** timeout for the transition
+Returns **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** timeout in ms for the transition
 
 ### stateChanged
 
@@ -180,6 +204,14 @@ Called when the state changes
 -   `newState` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** new state
 
 Returns **void** 
+
+## StateTransitionMixin
+
+**Parameters**
+
+-   `superclass` **Class** 
+-   `actions` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[Action](#action)>** 
+-   `initialState` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
 
 ## defineActionMethods
 

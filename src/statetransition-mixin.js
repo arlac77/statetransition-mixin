@@ -2,6 +2,20 @@ const STATE_PROPERTY = Symbol('state');
 const TRANSITION_PROPERTY = Symbol('transition');
 const TRANSITION_PROMISE_PROPERTY = Symbol('transitionPromise');
 
+/**
+ * @typedef {Object} Action
+ * @property {string} name
+ * @property {Object} transitions
+ */
+
+/**
+ * @typedef {Object} Transition
+ * @property {Transition} initial
+ * @property {Transition} during
+ * @property {Transition} target
+ * @property {Transition} rejected
+ */
+
 export function prepareActions(as) {
   const actions = {};
   const states = {};
@@ -59,13 +73,11 @@ export function prepareActions(as) {
 export const BaseMethods = {
   /**
    * Called when state transition action is not allowed
-   * @param {Object} action to be acted on
-   * @return {Promise} rejecting with an Error
+   * @param {Action} action to be acted on
+   * @throws always Error indicating that the given state transition is not allowed
    */
-  illegalStateTransition(action) {
-    return Promise.reject(
-      new Error(`Can't ${action.name} ${this} in ${this.state} state`)
-    );
+  async illegalStateTransition(action) {
+    throw new Error(`Can't ${action.name} ${this} in ${this.state} state`);
   },
 
   /**
@@ -84,8 +96,8 @@ export const BaseMethods = {
 
   /**
    * Called to get the timeout value for a given transition
-   * @param {Object} transition the transition
-   * @return {number} timeout for the transition
+   * @param {Transition} transition the transition
+   * @return {number} timeout in ms for the transition
    */
   timeoutForTransition(transition) {
     return transition.timeout;
@@ -125,22 +137,25 @@ export function defineStateTransitionProperties(object, actions, currentState) {
   Object.defineProperties(object, properties);
 }
 
-export function StateTransitionMixin(superclass, actions, currentState) {
+/**
+ * @param {Class} superclass
+ * @param {Action[]} actions
+ * @param {string} initialState
+ */
+export function StateTransitionMixin(superclass, actions, initialState) {
   const newClass = class extends superclass {
     constructor(...args) {
       super(...args);
-      this[STATE_PROPERTY] = currentState;
+      this[STATE_PROPERTY] = initialState;
     }
 
     /**
      * Called when state transition action is not allowed
-     * @param {Object} action to be acted on
-     * @return {Promise} rejecting with an Error
+     * @param {Action} action to be acted on
+     * @throws always Error indicating that the given state transition is not allowed
      */
-    illegalStateTransition(action) {
-      return Promise.reject(
-        new Error(`Can't ${action.name} ${this} in ${this.state} state`)
-      );
+    async illegalStateTransition(action) {
+      throw new Error(`Can't ${action.name} ${this} in ${this.state} state`);
     }
 
     /**
@@ -160,8 +175,8 @@ export function StateTransitionMixin(superclass, actions, currentState) {
 
     /**
      * Called to get the timeout value for a given transition
-     * @param  {Object} transition transtion to deliver timout value for
-     * @return {number} timeout for the transition
+     * @param  {Transition} transition transtion to deliver timout value for
+     * @return {number} timeout for the transition in milliseconds
      */
     timeoutForTransition(transition) {
       return transition.timeout;
@@ -238,7 +253,7 @@ function resolverPromise() {
  * There can only be one transition in place at a given point in time.
  * @param {Object} object where we define the methods
  * @param {Object} actionsAndStates object describing the state transitions
- * @param {boolean} enumerable  should the action methods be enumerable defaults to false
+ * @param {boolean} enumerable should the action methods be enumerable defaults to false
  * @return {void}
  */
 export function defineActionMethods(
