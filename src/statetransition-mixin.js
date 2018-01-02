@@ -149,80 +149,81 @@ export function defineStateTransitionProperties(object, actions, currentState) {
  * @param {string} initialState starting state
  */
 export function StateTransitionMixin(superclass, actions, initialState) {
-  /**
-   * Extends a class to support state transtions 
-   */
-  const newClass = class StateTransitionMixin extends superclass {
-    constructor(...args) {
-      super(...args);
-      this[STATE_PROPERTY] = initialState;
-    }
-
+  const newClass =
     /**
-     * Called when state transition action is not allowed
-     * @param {Action} action to be acted on
-     * @throws always Error indicating that the given state transition is not allowed
+     * Generated mixin class with support of state transtions
      */
-    async illegalStateTransition(action) {
-      throw new Error(`Can't ${action.name} ${this} in ${this.state} state`);
-    }
-
-    /**
-     * Called when the state transtion implementation promise rejects.
-     * Resets the transition
-     * @param {Object} rejected initiating error
-     * @param {string} newState  final state of error
-     * @return {Promise} rejecting promise
-     */
-    stateTransitionRejection(rejected, newState) {
-      this.state = newState;
-      this[TRANSITION_PROMISE_PROPERTY] = undefined;
-      this[TRANSITION_PROPERTY] = undefined;
-
-      return Promise.reject(rejected);
-    }
-
-    /**
-     * Called to get the timeout value for a given transition
-     * By default we deliver the timeout property of the transition.
-     * @param  {Transition} transition transtion to deliver timout value for
-     * @return {number} timeout for the transition in milliseconds
-     */
-    timeoutForTransition(transition) {
-      return transition.timeout;
-    }
-
-    /**
-     * To be overwritten
-     * Called when the state changes
-     * @param {string} oldState previous state
-     * @param {string} newState new state
-     * @return {void}
-     */
-    stateChanged() {}
-
-    /**
-     * Delivers current state
-     * return {string} current state
-     */
-    get state() {
-      return this[STATE_PROPERTY];
-    }
-
-    /**
-     * Sets the current state.
-     * no transtion will be executed only the stateChanged method will be called
-     * if the newState differs from the current state.
-     * @param {string} newState target state
-     * @return {void}
-     */
-    set state(newState) {
-      if (newState !== this[STATE_PROPERTY]) {
-        this.stateChanged(this[STATE_PROPERTY], newState);
-        this[STATE_PROPERTY] = newState;
+    class StateTransitionMixin extends superclass {
+      constructor(...args) {
+        super(...args);
+        this[STATE_PROPERTY] = initialState;
       }
-    }
-  };
+
+      /**
+       * Called when state transition action is not allowed
+       * @param {Action} action to be acted on
+       * @throws always Error indicating that the given state transition is not allowed
+       */
+      async illegalStateTransition(action) {
+        throw new Error(`Can't ${action.name} ${this} in ${this.state} state`);
+      }
+
+      /**
+       * Called when the state transtion implementation promise rejects.
+       * Resets the transition
+       * @param {Object} rejected initiating error
+       * @param {string} newState  final state of error
+       * @return {Promise} rejecting promise
+       */
+      stateTransitionRejection(rejected, newState) {
+        this.state = newState;
+        this[TRANSITION_PROMISE_PROPERTY] = undefined;
+        this[TRANSITION_PROPERTY] = undefined;
+
+        return Promise.reject(rejected);
+      }
+
+      /**
+       * Called to get the timeout value for a given transition
+       * By default we deliver the timeout property of the transition.
+       * @param  {Transition} transition transtion to deliver timout value for
+       * @return {number} timeout for the transition in milliseconds
+       */
+      timeoutForTransition(transition) {
+        return transition.timeout;
+      }
+
+      /**
+       * To be overwritten
+       * Called when the state changes
+       * @param {string} oldState previous state
+       * @param {string} newState new state
+       * @return {void}
+       */
+      stateChanged() {}
+
+      /**
+       * Delivers current state
+       * return {string} current state
+       */
+      get state() {
+        return this[STATE_PROPERTY];
+      }
+
+      /**
+       * Sets the current state.
+       * no transtion will be executed only the stateChanged method will be called
+       * if the newState differs from the current state.
+       * @param {string} newState target state
+       * @return {void}
+       */
+      set state(newState) {
+        if (newState !== this[STATE_PROPERTY]) {
+          this.stateChanged(this[STATE_PROPERTY], newState);
+          this[STATE_PROPERTY] = newState;
+        }
+      }
+    };
 
   defineActionMethods(newClass.prototype, actions, true);
   return newClass;
@@ -259,15 +260,18 @@ function resolverPromise() {
 /**
  * Defines methods to perform the state transitions.
  * States are traversed in the following way:
- * current -> during -> final
+ *
+ *  *current* -> *during* -> *final*
+ *
  * If the step is not in one of the transitions current
  * states and also not already in the transitions final
  * state a rejecting promise will be delivered from the
  * generated function. In the 'during' state a function
  * named '_' + <transitions name> (sample: '_start()')
  * will be called first.
+ *
  * It is expected that this function delivers a promise.
- * Special handling of consequent transitions:
+ * ### Special handling of consequent transitions
  * While in a during state the former delivered promise will be
  * delivered again. This enshures that several consequent
  * transitions in a row will be fullfiled by the same promise.

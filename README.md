@@ -127,6 +127,7 @@ console.log('stopping == ${myObject.state}');
 ### Table of Contents
 
 -   [Action](#action)
+-   [prepareActions](#prepareactions)
 -   [Transition](#transition)
 -   [BaseMethods](#basemethods)
     -   [illegalStateTransition](#illegalstatetransition)
@@ -134,7 +135,9 @@ console.log('stopping == ${myObject.state}');
     -   [timeoutForTransition](#timeoutfortransition)
     -   [stateChanged](#statechanged)
 -   [StateTransitionMixin](#statetransitionmixin)
+-   [StateTransitionMixin](#statetransitionmixin-1)
 -   [defineActionMethods](#defineactionmethods)
+    -   [Special handling of consequent transitions](#special-handling-of-consequent-transitions)
 
 ## Action
 
@@ -143,7 +146,15 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 **Properties**
 
 -   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
--   `transitions` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 
+-   `transitions` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** possible transitions from the current state
+
+## prepareActions
+
+Compile actions and states
+
+**Parameters**
+
+-   `as` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 
 
 ## Transition
 
@@ -151,6 +162,7 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 **Properties**
 
+-   `timeout` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** in milliseconds the transtion is allowed to take
 -   `initial` **[Transition](#transition)** 
 -   `during` **[Transition](#transition)** 
 -   `target` **[Transition](#transition)** 
@@ -195,7 +207,7 @@ Returns **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/G
 
 ### stateChanged
 
-To be overwritten
+To be overwritten.
 Called when the state changes
 
 **Parameters**
@@ -207,25 +219,38 @@ Returns **void**
 
 ## StateTransitionMixin
 
+Extends a class to support state transtions
+
 **Parameters**
 
 -   `superclass` **Class** 
 -   `actions` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[Action](#action)>** 
--   `initialState` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+-   `initialState` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** starting state
+
+## StateTransitionMixin
+
+**Extends superclass**
+
+Generated mixin class with support of state transtions
 
 ## defineActionMethods
 
-Defines methods to perfom the state transitions.
+Defines methods to perform the state transitions.
 States are traversed in the following way:
-current -> during -> final
+
+ _current_ -> _during_ -> _final_
+
 If the step is not in one of the transitions current
 states and also not already in the transitions final
 state a rejecting promise will be delivered from the
 generated function. In the 'during' state a function
 named '\_' + <transitions name> (sample: '\_start()')
 will be called first.
+
 It is expected that this function delivers a promise.
-Special handling of consequent transitions:
+
+### Special handling of consequent transitions
+
 While in a during state the former delivered promise will be
 delivered again. This enshures that several consequent
 transitions in a row will be fullfiled by the same promise.
@@ -233,7 +258,7 @@ There can only be one transition in place at a given point in time.
 
 **Parameters**
 
--   `object` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** where we define the methods
+-   `object` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** target object where we define the methods
 -   `actionsAndStates` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** object describing the state transitions
     -   `actionsAndStates.0`  
     -   `actionsAndStates.1`  
