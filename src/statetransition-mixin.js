@@ -5,17 +5,22 @@ const TRANSITION_PROMISE_PROPERTY = Symbol('transitionPromise');
 /**
  * @typedef {Object} Action
  * @property {string} name
- * @property {Object} transitions
+ * @property {Object} transitions possible transitions from the current state
  */
 
 /**
  * @typedef {Object} Transition
+ * @property {number} timeout in milliseconds the transtion is allowed to take
  * @property {Transition} initial
  * @property {Transition} during
  * @property {Transition} target
  * @property {Transition} rejected
  */
 
+/**
+ * Compile actions and states
+ * @param {Object} as
+ */
 export function prepareActions(as) {
   const actions = {};
   const states = {};
@@ -104,7 +109,7 @@ export const BaseMethods = {
   },
 
   /**
-   * To be overwritten
+   * To be overwritten.
    * Called when the state changes
    * @param {string} oldState previous state
    * @param {string} newState new state
@@ -138,12 +143,16 @@ export function defineStateTransitionProperties(object, actions, currentState) {
 }
 
 /**
+ * Extends a class to support state transtions
  * @param {Class} superclass
  * @param {Action[]} actions
- * @param {string} initialState
+ * @param {string} initialState starting state
  */
 export function StateTransitionMixin(superclass, actions, initialState) {
-  const newClass = class extends superclass {
+  /**
+   * Extends a class to support state transtions 
+   */
+  const newClass = class StateTransitionMixin extends superclass {
     constructor(...args) {
       super(...args);
       this[STATE_PROPERTY] = initialState;
@@ -175,6 +184,7 @@ export function StateTransitionMixin(superclass, actions, initialState) {
 
     /**
      * Called to get the timeout value for a given transition
+     * By default we deliver the timeout property of the transition.
      * @param  {Transition} transition transtion to deliver timout value for
      * @return {number} timeout for the transition in milliseconds
      */
@@ -191,10 +201,21 @@ export function StateTransitionMixin(superclass, actions, initialState) {
      */
     stateChanged() {}
 
+    /**
+     * Delivers current state
+     * return {string} current state
+     */
     get state() {
       return this[STATE_PROPERTY];
     }
 
+    /**
+     * Sets the current state.
+     * no transtion will be executed only the stateChanged method will be called
+     * if the newState differs from the current state.
+     * @param {string} newState target state
+     * @return {void}
+     */
     set state(newState) {
       if (newState !== this[STATE_PROPERTY]) {
         this.stateChanged(this[STATE_PROPERTY], newState);
@@ -236,7 +257,7 @@ function resolverPromise() {
 }
 
 /**
- * Defines methods to perfom the state transitions.
+ * Defines methods to perform the state transitions.
  * States are traversed in the following way:
  * current -> during -> final
  * If the step is not in one of the transitions current
@@ -251,7 +272,7 @@ function resolverPromise() {
  * delivered again. This enshures that several consequent
  * transitions in a row will be fullfiled by the same promise.
  * There can only be one transition in place at a given point in time.
- * @param {Object} object where we define the methods
+ * @param {Object} object target object where we define the methods
  * @param {Object} actionsAndStates object describing the state transitions
  * @param {boolean} enumerable should the action methods be enumerable defaults to false
  * @return {void}
