@@ -126,9 +126,12 @@ console.log('stopping == ${myObject.state}');
 
 ### Table of Contents
 
+-   [STATE_PROPERTY](#state_property)
+-   [TRANSITION_PROPERTY](#transition_property)
+-   [TRANSITION_PROMISE_PROPERTY](#transition_promise_property)
 -   [Action](#action)
--   [prepareActions](#prepareactions)
 -   [Transition](#transition)
+-   [prepareActions](#prepareactions)
 -   [BaseMethods](#basemethods)
     -   [illegalStateTransition](#illegalstatetransition)
     -   [stateTransitionRejection](#statetransitionrejection)
@@ -139,22 +142,26 @@ console.log('stopping == ${myObject.state}');
 -   [defineActionMethods](#defineactionmethods)
     -   [Special handling of consequent transitions](#special-handling-of-consequent-transitions)
 
+## STATE_PROPERTY
+
+current state
+
+## TRANSITION_PROPERTY
+
+ongoing transition
+
+## TRANSITION_PROMISE_PROPERTY
+
+promise of the ongoing transition
+
 ## Action
 
 Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
 
 **Properties**
 
--   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+-   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** like 'start' or 'stop'
 -   `transitions` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** possible transitions from the current state
-
-## prepareActions
-
-Compile actions and states
-
-**Parameters**
-
--   `as` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 
 
 ## Transition
 
@@ -167,6 +174,32 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 -   `during` **[Transition](#transition)** 
 -   `target` **[Transition](#transition)** 
 -   `rejected` **[Transition](#transition)** 
+
+## prepareActions
+
+Compile actions and states
+
+**Parameters**
+
+-   `as` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 
+
+**Examples**
+
+```javascript
+prepareActions({
+'start':{
+ 'stopped': {
+   'target': 'running',
+   'during': 'starting'
+}},
+'stop': {
+ 'running': {
+   'target': 'stopped',
+   'during': 'stopping'
+ }}});
+```
+
+Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)** 
 
 ## BaseMethods
 
@@ -190,10 +223,10 @@ Resets the transition
 
 **Parameters**
 
--   `rejected` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** initiating error
+-   `rejected` **any** initiating error
 -   `newState` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** final state of error
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** rejecting promise
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;any>** rejecting promise
 
 ### timeoutForTransition
 

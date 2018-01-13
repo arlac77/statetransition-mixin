@@ -1,10 +1,21 @@
+/**
+ * current state
+ */
 const STATE_PROPERTY = Symbol('state');
+
+/**
+ * ongoing transition
+ */
 const TRANSITION_PROPERTY = Symbol('transition');
+
+/**
+ * promise of the ongoing transition
+ */
 const TRANSITION_PROMISE_PROPERTY = Symbol('transitionPromise');
 
 /**
  * @typedef {Object} Action
- * @property {string} name
+ * @property {string} name like 'start' or 'stop'
  * @property {Object} transitions possible transitions from the current state
  */
 
@@ -19,7 +30,20 @@ const TRANSITION_PROMISE_PROPERTY = Symbol('transitionPromise');
 
 /**
  * Compile actions and states
+ * @example
+ * prepareActions({
+ * 'start':{
+ *  'stopped': {
+ *    'target': 'running',
+ *    'during': 'starting'
+ * }},
+ * 'stop': {
+ *  'running': {
+ *    'target': 'stopped',
+ *    'during': 'stopping'
+ *  }}});
  * @param {Object} as
+ * @return {Array}
  */
 export function prepareActions(as) {
   const actions = {};
@@ -88,9 +112,9 @@ export const BaseMethods = {
   /**
    * Called when the state transtion implementation promise rejects.
    * Resets the transition
-   * @param {Object} rejected initiating error
+   * @param {any} rejected initiating error
    * @param {string} newState final state of error
-   * @return {Promise} rejecting promise
+   * @return {Promise<any>} rejecting promise
    */
   stateTransitionRejection(rejected, newState) {
     this.state = newState;
@@ -171,9 +195,9 @@ export function StateTransitionMixin(superclass, actions, initialState) {
       /**
        * Called when the state transtion implementation promise rejects.
        * Resets the transition
-       * @param {Object} rejected initiating error
+       * @param {any} rejected initiating error
        * @param {string} newState  final state of error
-       * @return {Promise} rejecting promise
+       * @return {Promise<any>} rejecting promise
        */
       stateTransitionRejection(rejected, newState) {
         this.state = newState;
