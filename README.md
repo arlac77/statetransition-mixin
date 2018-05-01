@@ -3,7 +3,6 @@
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/arlac77/statetransition-mixin)
 [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 [![Build Status](https://secure.travis-ci.org/arlac77/statetransition-mixin.png)](http://travis-ci.org/arlac77/statetransition-mixin)
-[![bithound](https://www.bithound.io/github/arlac77/statetransition-mixin/badges/score.svg)](https://www.bithound.io/github/arlac77/statetransition-mixin)
 [![codecov.io](http://codecov.io/github/arlac77/statetransition-mixin/coverage.svg?branch=master)](http://codecov.io/github/arlac77/statetransition-mixin?branch=master)
 [![Coverage Status](https://coveralls.io/repos/arlac77/statetransition-mixin/badge.svg)](https://coveralls.io/r/arlac77/statetransition-mixin)
 [![Known Vulnerabilities](https://snyk.io/test/github/arlac77/statetransition-mixin/badge.svg)](https://snyk.io/test/github/arlac77/statetransition-mixin)
