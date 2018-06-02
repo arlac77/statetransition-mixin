@@ -1,6 +1,9 @@
 {
   "name": "statetransition-mixin",
   "version": "0.0.0-semantic-release",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "dist/statetransition-mixin.js",
   "module": "src/statetransition-mixin.js",
   "description": "mixin to declare state transition methods like start & stop",
