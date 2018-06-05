@@ -129,17 +129,27 @@ console.log('stopping == ${myObject.state}');
 -   [TRANSITION_PROPERTY](#transition_property)
 -   [TRANSITION_PROMISE_PROPERTY](#transition_promise_property)
 -   [Action](#action)
+    -   [Properties](#properties)
 -   [Transition](#transition)
+    -   [Properties](#properties-1)
 -   [prepareActions](#prepareactions)
+    -   [Parameters](#parameters)
+    -   [Examples](#examples)
 -   [BaseMethods](#basemethods)
     -   [illegalStateTransition](#illegalstatetransition)
+        -   [Parameters](#parameters-1)
     -   [stateTransitionRejection](#statetransitionrejection)
+        -   [Parameters](#parameters-2)
     -   [timeoutForTransition](#timeoutfortransition)
+        -   [Parameters](#parameters-3)
     -   [stateChanged](#statechanged)
+        -   [Parameters](#parameters-4)
 -   [StateTransitionMixin](#statetransitionmixin)
+    -   [Parameters](#parameters-5)
 -   [StateTransitionMixin](#statetransitionmixin-1)
 -   [defineActionMethods](#defineactionmethods)
     -   [Special handling of consequent transitions](#special-handling-of-consequent-transitions)
+    -   [Parameters](#parameters-6)
 
 ## STATE_PROPERTY
 
@@ -157,7 +167,7 @@ promise of the ongoing transition
 
 Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
 
-**Properties**
+### Properties
 
 -   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** like 'start' or 'stop'
 -   `transitions` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** possible transitions from the current state
@@ -166,7 +176,7 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
 
-**Properties**
+### Properties
 
 -   `timeout` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** in milliseconds the transtion is allowed to take
 -   `initial` **[Transition](#transition)** 
@@ -178,11 +188,11 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 Compile actions and states
 
-**Parameters**
+### Parameters
 
 -   `as` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 
 
-**Examples**
+### Examples
 
 ```javascript
 prepareActions({
@@ -208,7 +218,7 @@ all methods provided in the mixin
 
 Called when state transition action is not allowed
 
-**Parameters**
+#### Parameters
 
 -   `action` **[Action](#action)** to be acted on
 
@@ -220,7 +230,7 @@ Called when state transition action is not allowed
 Called when the state transtion implementation promise rejects.
 Resets the transition
 
-**Parameters**
+#### Parameters
 
 -   `rejected` **any** initiating error
 -   `newState` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** final state of error
@@ -231,7 +241,7 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 Called to get the timeout value for a given transition
 
-**Parameters**
+#### Parameters
 
 -   `transition` **[Transition](#transition)** the transition
 
@@ -242,7 +252,7 @@ Returns **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/G
 To be overwritten.
 Called when the state changes
 
-**Parameters**
+#### Parameters
 
 -   `oldState` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** previous state
 -   `newState` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** new state
@@ -253,7 +263,7 @@ Returns **void**
 
 Extends a class to support state transtions
 
-**Parameters**
+### Parameters
 
 -   `superclass` **Class** 
 -   `actions` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[Action](#action)>** 
@@ -288,7 +298,7 @@ delivered again. This enshures that several consequent
 transitions in a row will be fullfiled by the same promise.
 There can only be one transition in place at a given point in time.
 
-**Parameters**
+### Parameters
 
 -   `object` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** target object where we define the methods
 -   `actionsAndStates` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** object describing the state transitions
