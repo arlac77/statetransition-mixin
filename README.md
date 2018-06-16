@@ -1,19 +1,3 @@
-[![npm](https://img.shields.io/npm/v/statetransition-mixin.svg)](https://www.npmjs.com/package/statetransition-mixin)
-[![Greenkeeper](https://badges.greenkeeper.io/arlac77/statetransition-mixin.svg)](https://greenkeeper.io/)
-[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/arlac77/statetransition-mixin)
-[![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
-[![Build Status](https://secure.travis-ci.org/arlac77/statetransition-mixin.png)](http://travis-ci.org/arlac77/statetransition-mixin)
-[![codecov.io](http://codecov.io/github/arlac77/statetransition-mixin/coverage.svg?branch=master)](http://codecov.io/github/arlac77/statetransition-mixin?branch=master)
-[![Coverage Status](https://coveralls.io/repos/arlac77/statetransition-mixin/badge.svg)](https://coveralls.io/r/arlac77/statetransition-mixin)
-[![Known Vulnerabilities](https://snyk.io/test/github/arlac77/statetransition-mixin/badge.svg)](https://snyk.io/test/github/arlac77/statetransition-mixin)
-[![GitHub Issues](https://img.shields.io/github/issues/arlac77/statetransition-mixin.svg?style=flat-square)](https://github.com/arlac77/statetransition-mixin/issues)
-[![Stories in Ready](https://badge.waffle.io/arlac77/statetransition-mixin.svg?label=ready&title=Ready)](http://waffle.io/arlac77/statetransition-mixin)
-[![Dependency Status](https://david-dm.org/arlac77/statetransition-mixin.svg)](https://david-dm.org/arlac77/statetransition-mixin)
-[![devDependency Status](https://david-dm.org/arlac77/statetransition-mixin/dev-status.svg)](https://david-dm.org/arlac77/statetransition-mixin#info=devDependencies)
-[![docs](http://inch-ci.org/github/arlac77/statetransition-mixin.svg?branch=master)](http://inch-ci.org/github/arlac77/statetransition-mixin)
-[![XO code style](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/sindresorhus/xo)
-[![downloads](http://img.shields.io/npm/dm/statetransition-mixin.svg?style=flat-square)](https://npmjs.org/package/statetransition-mixin)
-[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
 # statetransition-mixin
 
