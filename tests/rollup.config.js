@@ -10,6 +10,7 @@ export default {
   output: {
     file: 'build/simple-test.js',
     format: 'cjs',
-    sourcemap: true
+    sourcemap: true,
+    interop: false
   }
 };
