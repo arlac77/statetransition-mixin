@@ -70,9 +70,9 @@ console.log('stopping == ${myObject.state}');
 <!-- skip-example -->
 
 ```es6
-const stm = require('statetransition-mixin');
+import { StateTransitionMixin, prepareActions } = from 'statetransition-mixin';
 
-const actions = stm.prepareActions({
+const actions = prepareActions({
 start: { // declare start() and call _start() internally
   stopped: {
     target: "running",
@@ -96,7 +96,7 @@ stop: { // declare stop() and call _stop() internally
 
 class BaseClass {}
 
-class StatefullClass extends stm.StateTransitionMixin(BaseClass, actions, 'stopped') {
+class StatefullClass extends StateTransitionMixin(BaseClass, actions, 'stopped') {
 _start() { // will be called to go from stopped to running
   return new Promise((f, r) => {
     setTimeout(() => {
@@ -105,8 +105,6 @@ _start() { // will be called to go from stopped to running
   });
 }
 }
-
-stm.defineActionMethods(StatefullClass.prototype, actions);
 
 let myObject = new StatefullClass();
 
@@ -185,6 +183,8 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 -   `rejected` **[Transition](#transition)** 
 
 ## prepareActions
+
+<!-- skip-example -->
 
 Compile actions and states
 

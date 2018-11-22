@@ -29,6 +29,7 @@ const TRANSITION_PROMISE_PROPERTY = Symbol('transitionPromise');
  */
 
 /**
+ * <!-- skip-example -->
  * Compile actions and states
  * @example
  * prepareActions({
