@@ -326,10 +326,10 @@ export function defineActionMethods(
       Object.defineProperty(object, privateActionName, defaultProperties);
     }
 
-    defaultProperties.value = function() {
+    defaultProperties.value = async function() {
       // target state already reached
       if (this.state === action.target) {
-        return Promise.resolve(this);
+        return this;
       }
 
       // normal start we are in the initial state of the action
