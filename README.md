@@ -97,7 +97,7 @@ stop: { // declare stop() and call _stop() internally
 class BaseClass {}
 
 class StatefullClass extends StateTransitionMixin(BaseClass, actions, 'stopped') {
-_start() { // will be called to go from stopped to running
+async _start() { // will be called to go from stopped to running
   return new Promise((f, r) => {
     setTimeout(() => {
       f(this)
