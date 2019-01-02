@@ -4,8 +4,8 @@
   "publishConfig": {
     "access": "public"
   },
-  "main": "dist/statetransition-mixin.js",
-  "module": "src/statetransition-mixin.js",
+  "main": "src/statetransition-mixin.mjs",
+  "module": "src/statetransition-mixin.mjs",
   "description": "mixin to declare state transition methods like start & stop",
   "keywords": [
     "state",
@@ -20,9 +20,9 @@
   "license": "BSD-2-Clause",
   "scripts": {
     "cover": "c8 --temp-directory build/coverage ava && c8 report -r lcov --temp-directory build/coverage",
-    "docs": "documentation readme src/statetransition-mixin.js --section=API",
-    "lint": "documentation lint src/statetransition-mixin.js",
-    "posttest": "markdown-doctest && npm run prepare",
+    "docs": "documentation readme src/statetransition-mixin.mjs --section=API",
+    "lint": "documentation lint src/statetransition-mixin.mjs",
+    "posttest": "markdown-doctest",
     "test": "ava"
   },
   "dependencies": {},
