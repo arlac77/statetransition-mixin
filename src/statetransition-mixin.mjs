@@ -197,7 +197,7 @@ export function StateTransitionMixin(superclass, actions, initialState) {
        * Called when the state transtion implementation promise rejects.
        * Resets the transition
        * @param {any} rejected initiating error
-       * @param {string} newState  final state of error
+       * @param {string} newState final state of error
        * @return {Promise<any>} rejecting promise
        */
       stateTransitionRejection(rejected, newState) {
