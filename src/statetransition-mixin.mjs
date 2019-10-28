@@ -1,17 +1,17 @@
 /**
  * current state
  */
-const STATE_PROPERTY = Symbol('state');
+const STATE_PROPERTY = Symbol("state");
 
 /**
  * ongoing transition
  */
-const TRANSITION_PROPERTY = Symbol('transition');
+const TRANSITION_PROPERTY = Symbol("transition");
 
 /**
  * promise of the ongoing transition
  */
-const TRANSITION_PROMISE_PROPERTY = Symbol('transitionPromise');
+const TRANSITION_PROMISE_PROPERTY = Symbol("transitionPromise");
 
 /**
  * @typedef {Object} Action
@@ -73,7 +73,7 @@ export function prepareActions(as) {
       const t = a[initialState];
 
       if (t.rejected === undefined) {
-        t.rejected = 'failed';
+        t.rejected = "failed";
       }
 
       initialTransitions[initialState] = t;
@@ -98,160 +98,90 @@ export function prepareActions(as) {
 }
 
 /**
- * all methods provided in the mixin
- */
-export const BaseMethods = {
-  /**
-   * Called when state transition action is not allowed
-   * @param {Action} action to be acted on
-   * @throws always Error indicating that the given state transition is not allowed
-   */
-  async illegalStateTransition(action) {
-    throw new Error(`Can't ${action.name} ${this} in ${this.state} state`);
-  },
-
-  /**
-   * Called when the state transtion implementation promise rejects.
-   * Resets the transition
-   * @param {any} rejected initiating error
-   * @param {string} newState final state of error
-   * @return {Promise<any>} rejecting promise
-   */
-  stateTransitionRejection(rejected, newState) {
-    this.state = newState;
-    this[TRANSITION_PROMISE_PROPERTY] = undefined;
-    this[TRANSITION_PROPERTY] = undefined;
-    return Promise.reject(rejected);
-  },
-
-  /**
-   * Called to get the timeout value for a given transition
-   * @param {Transition} transition the transition
-   * @return {number} timeout in ms for the transition
-   */
-  timeoutForTransition(transition) {
-    return transition.timeout;
-  },
-
-  /**
-   * To be overwritten.
-   * Called when the state changes
-   * @param {string} oldState previous state
-   * @param {string} newState new state
-   * @return {void}
-   */
-  stateChanged(oldState, newState) {}
-};
-
-export function defineStateTransitionProperties(object, actions, currentState) {
-  const properties = {};
-
-  properties.state = {
-    get() {
-      return currentState;
-    },
-    set(newState) {
-      if (newState !== currentState) {
-        this.stateChanged(currentState, newState);
-        currentState = newState;
-      }
-    }
-  };
-
-  Object.keys(BaseMethods).forEach(name => {
-    if (object[name] === undefined) {
-      object[name] = BaseMethods[name];
-    }
-  });
-
-  Object.defineProperties(object, properties);
-}
-
-/**
  * Extends a class to support state transtions
  * @param {Class} superclass
  * @param {Action[]} actions
  * @param {string} initialState starting state
  */
 export function StateTransitionMixin(superclass, actions, initialState) {
-  const newClass =
+  /**
+   * Generated mixin class with support of state transtions
+   */
+  const clazz = class StateTransitionMixin extends superclass {
+    constructor(...args) {
+      super(...args);
+      this[STATE_PROPERTY] = initialState;
+    }
+
     /**
-     * Generated mixin class with support of state transtions
+     * Called when state transition action is not allowed
+     * @param {Action} action to be acted on
+     * @throws always Error indicating that the given state transition is not allowed
      */
-    class StateTransitionMixin extends superclass {
-      constructor(...args) {
-        super(...args);
-        this[STATE_PROPERTY] = initialState;
+    async illegalStateTransition(action) {
+      throw new Error(`Can't ${action.name} ${this} in ${this.state} state`);
+    }
+
+    /**
+     * Called when the state transtion implementation promise rejects.
+     * Resets the transition
+     * @param {any} rejected initiating error
+     * @param {string} newState final state of error
+     * @return {Promise<any>} rejecting promise
+     */
+    async stateTransitionRejection(rejected, newState) {
+      this.state = newState;
+      this[TRANSITION_PROMISE_PROPERTY] = undefined;
+      this[TRANSITION_PROPERTY] = undefined;
+
+      throw rejected;
+    }
+
+    /**
+     * Called to get the timeout value for a given transition
+     * By default we deliver the timeout property of the transition.
+     * @param  {Transition} transition transtion to deliver timout value for
+     * @return {number} timeout for the transition in milliseconds
+     */
+    timeoutForTransition(transition) {
+      return transition.timeout;
+    }
+
+    /**
+     * To be overwritten
+     * Called when the state changes
+     * @param {string} oldState previous state
+     * @param {string} newState new state
+     * @return {void}
+     */
+    stateChanged() {}
+
+    /**
+     * Delivers current state
+     * return {string} current state
+     */
+    get state() {
+      return this[STATE_PROPERTY];
+    }
+
+    /**
+     * Sets the current state.
+     * no transtion will be executed only the stateChanged method will be called
+     * if the newState differs from the current state.
+     * @param {string} newState target state
+     * @return {void}
+     */
+    set state(newState) {
+      if (newState !== this[STATE_PROPERTY]) {
+        this.stateChanged(this[STATE_PROPERTY], newState);
+        this[STATE_PROPERTY] = newState;
       }
+    }
+  };
 
-      /**
-       * Called when state transition action is not allowed
-       * @param {Action} action to be acted on
-       * @throws always Error indicating that the given state transition is not allowed
-       */
-      async illegalStateTransition(action) {
-        throw new Error(`Can't ${action.name} ${this} in ${this.state} state`);
-      }
+  defineActionMethods(clazz.prototype, actions, true);
 
-      /**
-       * Called when the state transtion implementation promise rejects.
-       * Resets the transition
-       * @param {any} rejected initiating error
-       * @param {string} newState final state of error
-       * @return {Promise<any>} rejecting promise
-       */
-      stateTransitionRejection(rejected, newState) {
-        this.state = newState;
-        this[TRANSITION_PROMISE_PROPERTY] = undefined;
-        this[TRANSITION_PROPERTY] = undefined;
-
-        return Promise.reject(rejected);
-      }
-
-      /**
-       * Called to get the timeout value for a given transition
-       * By default we deliver the timeout property of the transition.
-       * @param  {Transition} transition transtion to deliver timout value for
-       * @return {number} timeout for the transition in milliseconds
-       */
-      timeoutForTransition(transition) {
-        return transition.timeout;
-      }
-
-      /**
-       * To be overwritten
-       * Called when the state changes
-       * @param {string} oldState previous state
-       * @param {string} newState new state
-       * @return {void}
-       */
-      stateChanged() {}
-
-      /**
-       * Delivers current state
-       * return {string} current state
-       */
-      get state() {
-        return this[STATE_PROPERTY];
-      }
-
-      /**
-       * Sets the current state.
-       * no transtion will be executed only the stateChanged method will be called
-       * if the newState differs from the current state.
-       * @param {string} newState target state
-       * @return {void}
-       */
-      set state(newState) {
-        if (newState !== this[STATE_PROPERTY]) {
-          this.stateChanged(this[STATE_PROPERTY], newState);
-          this[STATE_PROPERTY] = newState;
-        }
-      }
-    };
-
-  defineActionMethods(newClass.prototype, actions, true);
-  return newClass;
+  return clazz;
 }
 
 function rejectUnlessResolvedWithin(promise, timeout, name) {
@@ -266,20 +196,16 @@ function rejectUnlessResolvedWithin(promise, timeout, name) {
     );
 
     return promise.then(
-      fullfilled => {
+      value => {
         clearTimeout(th);
-        resolve(fullfilled);
+        resolve(value);
       },
-      rejected => {
+      value => {
         clearTimeout(th);
-        reject(rejected);
+        reject(value);
       }
     );
   });
-}
-
-function resolverPromise() {
-  return Promise.resolve();
 }
 
 /**
@@ -303,26 +229,20 @@ function resolverPromise() {
  * There can only be one transition in place at a given point in time.
  * @param {Object} object target object where we define the methods
  * @param {Object} actionsAndStates object describing the state transitions
- * @param {boolean} enumerable should the action methods be enumerable defaults to false
  * @return {void}
  */
 export function defineActionMethods(
   object,
-  [actions, states],
-  enumerable = false
+  [actions, states]
 ) {
   const defaultProperties = {};
 
-  if (enumerable) {
-    defaultProperties.enumerable = true;
-  }
-
   Object.keys(actions).forEach(actionName => {
     const action = actions[actionName];
-    const privateActionName = '_' + actionName;
+    const privateActionName = "_" + actionName;
 
     if (!object.hasOwnProperty(privateActionName)) {
-      defaultProperties.value = resolverPromise;
+      defaultProperties.value = Promise.resolve();
       Object.defineProperty(object, privateActionName, defaultProperties);
     }
 

@@ -20,53 +20,9 @@ mixin to declare state transition methods like start & stop
 
 # usage
 
-```js
-const stm = require('statetransition-mixin');
-
-const actions = stm.prepareActions({
-start: { // declare start() and call _start() internally
-  stopped: {
-    target: "running",
-    during: "starting",
-    timeout: 10
-  }
-},
-stop: { // declare stop() and call _stop() internally
-  running: {
-    target: "stopped",
-    during: "stopping",
-    timeout: 5
-  },
-  starting: {
-    target: "stopped",
-    during: "stopping",
-    timeout: 10
-  }
-}
-});
-
-
-let myObject = {
-    _start() { // will be called to go from stopped to running
-    return Promise.resolve();
-    }
-};
-
-stm.defineActionMethods(myObject, actions, true);
-stm.defineStateTransitionProperties(myObject, actions, "stopped");
-
-myObject.start().then( (o) => console.log('started == ${o.state}'));
-console.log('starting == ${myObject.state}');
-
-myObject.stop().then( (o) => console.log('stopped == ${o.state}'));
-console.log('stopping == ${myObject.state}');
-```
-
-## for ES2015 classes to
-
 <!-- skip-example -->
 
-```es6
+```js
 import { StateTransitionMixin, prepareActions } = from 'statetransition-mixin';
 
 const actions = prepareActions({
@@ -130,21 +86,12 @@ console.log('stopping == ${myObject.state}');
 -   [prepareActions](#prepareactions)
     -   [Parameters](#parameters)
     -   [Examples](#examples)
--   [BaseMethods](#basemethods)
-    -   [illegalStateTransition](#illegalstatetransition)
-        -   [Parameters](#parameters-1)
-    -   [stateTransitionRejection](#statetransitionrejection)
-        -   [Parameters](#parameters-2)
-    -   [timeoutForTransition](#timeoutfortransition)
-        -   [Parameters](#parameters-3)
-    -   [stateChanged](#statechanged)
-        -   [Parameters](#parameters-4)
 -   [StateTransitionMixin](#statetransitionmixin)
-    -   [Parameters](#parameters-5)
--   [StateTransitionMixin](#statetransitionmixin-1)
+    -   [Parameters](#parameters-1)
+-   [clazz](#clazz)
 -   [defineActionMethods](#defineactionmethods)
     -   [Special handling of consequent transitions](#special-handling-of-consequent-transitions)
-    -   [Parameters](#parameters-6)
+    -   [Parameters](#parameters-2)
 
 ## STATE_PROPERTY
 
@@ -207,55 +154,6 @@ prepareActions({
 
 Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)** 
 
-## BaseMethods
-
-all methods provided in the mixin
-
-### illegalStateTransition
-
-Called when state transition action is not allowed
-
-#### Parameters
-
--   `action` **[Action](#action)** to be acted on
-
-
--   Throws **any** always Error indicating that the given state transition is not allowed
-
-### stateTransitionRejection
-
-Called when the state transtion implementation promise rejects.
-Resets the transition
-
-#### Parameters
-
--   `rejected` **any** initiating error
--   `newState` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** final state of error
-
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;any>** rejecting promise
-
-### timeoutForTransition
-
-Called to get the timeout value for a given transition
-
-#### Parameters
-
--   `transition` **[Transition](#transition)** the transition
-
-Returns **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** timeout in ms for the transition
-
-### stateChanged
-
-To be overwritten.
-Called when the state changes
-
-#### Parameters
-
--   `oldState` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** previous state
--   `newState` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** new state
-
-Returns **void** 
-
 ## StateTransitionMixin
 
 Extends a class to support state transtions
@@ -266,9 +164,7 @@ Extends a class to support state transtions
 -   `actions` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[Action](#action)>** 
 -   `initialState` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** starting state
 
-## StateTransitionMixin
-
-**Extends superclass**
+## clazz
 
 Generated mixin class with support of state transtions
 
@@ -301,7 +197,6 @@ There can only be one transition in place at a given point in time.
 -   `actionsAndStates` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** object describing the state transitions
     -   `actionsAndStates.0`  
     -   `actionsAndStates.1`  
--   `enumerable` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** should the action methods be enumerable defaults to false (optional, default `false`)
 
 Returns **void** 
 
