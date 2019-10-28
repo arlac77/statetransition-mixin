@@ -231,84 +231,80 @@ function rejectUnlessResolvedWithin(promise, timeout, name) {
  * @param {Object} actionsAndStates object describing the state transitions
  * @return {void}
  */
-export function defineActionMethods(
-  object,
-  [actions, states]
-) {
-  const defaultProperties = {};
-
+export function defineActionMethods(object, [actions, states]) {
   Object.keys(actions).forEach(actionName => {
     const action = actions[actionName];
     const privateActionName = "_" + actionName;
 
     if (!object.hasOwnProperty(privateActionName)) {
-      defaultProperties.value = Promise.resolve();
-      Object.defineProperty(object, privateActionName, defaultProperties);
+      Object.defineProperty(object, privateActionName, {
+        value: async () => {}
+      });
     }
 
-    defaultProperties.value = async function() {
-      // target state already reached
-      if (this.state === action.target) {
-        return this;
-      }
-
-      // normal start we are in the initial state of the action
-      if (action.initial[this.state]) {
-        // some transition is ongoing
-        if (this[TRANSITION_PROPERTY]) {
-          const t = this[TRANSITION_PROPERTY];
-
-          // we terminate it silently ?
-          // then do what we originally wanted
-          return this.stateTransitionRejection(
-            new Error(`Terminate ${t.name} to prepare ${actionName}`),
-            t.initial
-          ).then(() => {}, () => this[actionName]());
+    Object.defineProperty(object, actionName, {
+      value: async function() {
+        // target state already reached
+        if (this.state === action.target) {
+          return this;
         }
 
-        this[TRANSITION_PROPERTY] = action.initial[this.state];
-        this.state = this[TRANSITION_PROPERTY].during;
+        // normal start we are in the initial state of the action
+        if (action.initial[this.state]) {
+          // some transition is ongoing
+          if (this[TRANSITION_PROPERTY]) {
+            const t = this[TRANSITION_PROPERTY];
 
-        this[TRANSITION_PROMISE_PROPERTY] = rejectUnlessResolvedWithin(
-          this[privateActionName](),
-          this.timeoutForTransition(this[TRANSITION_PROPERTY]),
-          this[TRANSITION_PROPERTY].name
-        ).then(
-          () => {
-            if (!this[TRANSITION_PROPERTY]) {
-              // here we end if we canceled a transtion
-              // need some better ideas to communicate
-              return this;
-              /*
+            // we terminate it silently ?
+            // then do what we originally wanted
+            return this.stateTransitionRejection(
+              new Error(`Terminate ${t.name} to prepare ${actionName}`),
+              t.initial
+            ).then(() => {}, () => this[actionName]());
+          }
+
+          this[TRANSITION_PROPERTY] = action.initial[this.state];
+          this.state = this[TRANSITION_PROPERTY].during;
+
+          this[TRANSITION_PROMISE_PROPERTY] = rejectUnlessResolvedWithin(
+            this[privateActionName](),
+            this.timeoutForTransition(this[TRANSITION_PROPERTY]),
+            this[TRANSITION_PROPERTY].name
+          ).then(
+            () => {
+              if (!this[TRANSITION_PROPERTY]) {
+                // here we end if we canceled a transtion
+                // need some better ideas to communicate
+                return this;
+                /*
               return this.stateTransitionRejection(new Error(
                 `Should never happen: ${this.state} and no transition coming from ${actionName}`
               ), 'failed');
               */
-            }
+              }
 
-            this.state = this[TRANSITION_PROPERTY].target;
-            this[TRANSITION_PROMISE_PROPERTY] = undefined;
-            this[TRANSITION_PROPERTY] = undefined;
+              this.state = this[TRANSITION_PROPERTY].target;
+              this[TRANSITION_PROMISE_PROPERTY] = undefined;
+              this[TRANSITION_PROPERTY] = undefined;
 
-            return this;
-          },
-          rejected =>
-            this.stateTransitionRejection(
-              rejected,
-              this[TRANSITION_PROPERTY] && this[TRANSITION_PROPERTY].rejected
-            )
-        );
+              return this;
+            },
+            rejected =>
+              this.stateTransitionRejection(
+                rejected,
+                this[TRANSITION_PROPERTY] && this[TRANSITION_PROPERTY].rejected
+              )
+          );
 
-        return this[TRANSITION_PROMISE_PROPERTY];
-      } else if (this[TRANSITION_PROPERTY]) {
-        if (action.during[this[TRANSITION_PROPERTY].during]) {
           return this[TRANSITION_PROMISE_PROPERTY];
+        } else if (this[TRANSITION_PROPERTY]) {
+          if (action.during[this[TRANSITION_PROPERTY].during]) {
+            return this[TRANSITION_PROMISE_PROPERTY];
+          }
         }
+
+        return this.illegalStateTransition(action);
       }
-
-      return this.illegalStateTransition(action);
-    };
-
-    Object.defineProperty(object, actionName, defaultProperties);
+    });
   });
 }
