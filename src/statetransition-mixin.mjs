@@ -47,7 +47,6 @@ const TRANSITION_PROMISE_PROPERTY = Symbol("transitionPromise");
  * @return {Array}
  */
 export function prepareActions(as) {
-  const actions = {};
   const states = {};
 
   function addState(name, transition) {
@@ -63,12 +62,12 @@ export function prepareActions(as) {
     }
   }
 
-  Object.entries(as).forEach(([actionName,a]) => {
+  return [Object.fromEntries(Object.entries(as).map(([name, a]) => {
     const initialTransitions = {};
     const duringTransitions = {};
     let target;
 
-    Object.entries(a).forEach(([initialState,t]) => {
+    Object.entries(a).forEach(([initialState, t]) => {
       if (t.rejected === undefined) {
         t.rejected = "failed";
       }
@@ -76,22 +75,24 @@ export function prepareActions(as) {
       initialTransitions[initialState] = t;
       duringTransitions[t.during] = t;
       t.initial = initialState;
-      t.name = `${actionName}:${t.initial}->${t.target}`;
+      t.name = `${name}:${t.initial}->${t.target}`;
       addState(t.initial, t);
       addState(t.during, t);
       addState(t.target);
       addState(t.rejected);
       target = t.target;
     });
-    actions[actionName] = {
-      name: actionName,
-      initial: initialTransitions,
-      during: duringTransitions,
-      target
-    };
-  });
 
-  return [actions, states];
+    return [
+      name,
+      {
+        name,
+        initial: initialTransitions,
+        during: duringTransitions,
+        target
+      }
+    ];
+  })), states];
 }
 
 /**
