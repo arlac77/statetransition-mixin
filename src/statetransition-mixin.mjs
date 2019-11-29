@@ -1,17 +1,17 @@
 /**
  * current state
  */
-const STATE_PROPERTY = Symbol("state");
+const STATE = Symbol("state");
 
 /**
  * ongoing transition
  */
-const TRANSITION_PROPERTY = Symbol("transition");
+const TRANSITION = Symbol("transition");
 
 /**
  * promise of the ongoing transition
  */
-const TRANSITION_PROMISE_PROPERTY = Symbol("transitionPromise");
+const TRANSITION_PROMISE = Symbol("transitionPromise");
 
 /**
  * @typedef {Object} Action
@@ -62,37 +62,42 @@ export function prepareActions(as) {
     }
   }
 
-  return [Object.fromEntries(Object.entries(as).map(([name, a]) => {
-    const initialTransitions = {};
-    const duringTransitions = {};
-    let target;
+  return [
+    Object.fromEntries(
+      Object.entries(as).map(([name, a]) => {
+        const initialTransitions = {};
+        const duringTransitions = {};
+        let target;
 
-    Object.entries(a).forEach(([initialState, t]) => {
-      if (t.rejected === undefined) {
-        t.rejected = "failed";
-      }
+        Object.entries(a).forEach(([initialState, t]) => {
+          if (t.rejected === undefined) {
+            t.rejected = "failed";
+          }
 
-      initialTransitions[initialState] = t;
-      duringTransitions[t.during] = t;
-      t.initial = initialState;
-      t.name = `${name}:${t.initial}->${t.target}`;
-      addState(t.initial, t);
-      addState(t.during, t);
-      addState(t.target);
-      addState(t.rejected);
-      target = t.target;
-    });
+          initialTransitions[initialState] = t;
+          duringTransitions[t.during] = t;
+          t.initial = initialState;
+          t.name = `${name}:${t.initial}->${t.target}`;
+          addState(t.initial, t);
+          addState(t.during, t);
+          addState(t.target);
+          addState(t.rejected);
+          target = t.target;
+        });
 
-    return [
-      name,
-      {
-        name,
-        initial: initialTransitions,
-        during: duringTransitions,
-        target
-      }
-    ];
-  })), states];
+        return [
+          name,
+          {
+            name,
+            initial: initialTransitions,
+            during: duringTransitions,
+            target
+          }
+        ];
+      })
+    ),
+    states
+  ];
 }
 
 /**
@@ -108,7 +113,7 @@ export function StateTransitionMixin(superclass, actions, initialState) {
   const clazz = class StateTransitionMixin extends superclass {
     constructor(...args) {
       super(...args);
-      this[STATE_PROPERTY] = initialState;
+      this[STATE] = initialState;
     }
 
     /**
@@ -129,8 +134,8 @@ export function StateTransitionMixin(superclass, actions, initialState) {
      */
     async stateTransitionRejection(rejected, newState) {
       this.state = newState;
-      this[TRANSITION_PROMISE_PROPERTY] = undefined;
-      this[TRANSITION_PROPERTY] = undefined;
+      this[TRANSITION_PROMISE] = undefined;
+      this[TRANSITION] = undefined;
 
       throw rejected;
     }
@@ -159,7 +164,7 @@ export function StateTransitionMixin(superclass, actions, initialState) {
      * return {string} current state
      */
     get state() {
-      return this[STATE_PROPERTY];
+      return this[STATE];
     }
 
     /**
@@ -170,9 +175,9 @@ export function StateTransitionMixin(superclass, actions, initialState) {
      * @return {void}
      */
     set state(newState) {
-      if (newState !== this[STATE_PROPERTY]) {
-        this.stateChanged(this[STATE_PROPERTY], newState);
-        this[STATE_PROPERTY] = newState;
+      if (newState !== this[STATE]) {
+        this.stateChanged(this[STATE], newState);
+        this[STATE] = newState;
       }
     }
   };
@@ -246,30 +251,31 @@ export function defineActionMethods(object, [actions, states]) {
         // normal start we are in the initial state of the action
         if (action.initial[this.state]) {
           // some transition is ongoing
-          if (this[TRANSITION_PROPERTY]) {
-            const t = this[TRANSITION_PROPERTY];
+          if (this[TRANSITION]) {
+            const t = this[TRANSITION];
+            try {
+              // we terminate it silently ?
+              await this.stateTransitionRejection(
+                new Error(`Terminate ${t.name} to prepare ${actionName}`),
+                t.initial
+              );
 
-            // we terminate it silently ?
+            } catch (e) {}
+
             // then do what we originally wanted
-            return this.stateTransitionRejection(
-              new Error(`Terminate ${t.name} to prepare ${actionName}`),
-              t.initial
-            ).then(
-              () => {},
-              () => this[actionName]()
-            );
+            return this[actionName]();
           }
 
-          this[TRANSITION_PROPERTY] = action.initial[this.state];
-          this.state = this[TRANSITION_PROPERTY].during;
+          this[TRANSITION] = action.initial[this.state];
+          this.state = this[TRANSITION].during;
 
-          this[TRANSITION_PROMISE_PROPERTY] = rejectUnlessResolvedWithin(
+          this[TRANSITION_PROMISE] = rejectUnlessResolvedWithin(
             this[privateActionName](),
-            this.timeoutForTransition(this[TRANSITION_PROPERTY]),
-            this[TRANSITION_PROPERTY].name
+            this.timeoutForTransition(this[TRANSITION]),
+            this[TRANSITION].name
           ).then(
             () => {
-              if (!this[TRANSITION_PROPERTY]) {
+              if (!this[TRANSITION]) {
                 // here we end if we canceled a transtion
                 // need some better ideas to communicate
                 return this;
@@ -280,23 +286,23 @@ export function defineActionMethods(object, [actions, states]) {
               */
               }
 
-              this.state = this[TRANSITION_PROPERTY].target;
-              this[TRANSITION_PROMISE_PROPERTY] = undefined;
-              this[TRANSITION_PROPERTY] = undefined;
+              this.state = this[TRANSITION].target;
+              this[TRANSITION_PROMISE] = undefined;
+              this[TRANSITION] = undefined;
 
               return this;
             },
             rejected =>
               this.stateTransitionRejection(
                 rejected,
-                this[TRANSITION_PROPERTY] && this[TRANSITION_PROPERTY].rejected
+                this[TRANSITION] && this[TRANSITION].rejected
               )
           );
 
-          return this[TRANSITION_PROMISE_PROPERTY];
-        } else if (this[TRANSITION_PROPERTY]) {
-          if (action.during[this[TRANSITION_PROPERTY].during]) {
-            return this[TRANSITION_PROMISE_PROPERTY];
+          return this[TRANSITION_PROMISE];
+        } else if (this[TRANSITION]) {
+          if (action.during[this[TRANSITION].during]) {
+            return this[TRANSITION_PROMISE];
           }
         }
 
