@@ -63,15 +63,12 @@ export function prepareActions(as) {
     }
   }
 
-  Object.keys(as).forEach(actionName => {
-    const a = as[actionName];
+  Object.entries(as).forEach(([actionName,a]) => {
     const initialTransitions = {};
     const duringTransitions = {};
     let target;
 
-    Object.keys(a).forEach(initialState => {
-      const t = a[initialState];
-
+    Object.entries(a).forEach(([initialState,t]) => {
       if (t.rejected === undefined) {
         t.rejected = "failed";
       }
@@ -200,7 +197,7 @@ function rejectUnlessResolvedWithin(promise, timeout, name) {
         reject(new Error(`${name} request not resolved within ${timeout}ms`)),
       timeout
     );
-    
+
     promise.then(resolve, reject).finally(() => clearTimeout(th));
   });
 }
@@ -229,8 +226,7 @@ function rejectUnlessResolvedWithin(promise, timeout, name) {
  * @return {void}
  */
 export function defineActionMethods(object, [actions, states]) {
-  Object.keys(actions).forEach(actionName => {
-    const action = actions[actionName];
+  Object.entries(actions).forEach(([actionName, action]) => {
     const privateActionName = "_" + actionName;
 
     if (!object.hasOwnProperty(privateActionName)) {
@@ -257,7 +253,10 @@ export function defineActionMethods(object, [actions, states]) {
             return this.stateTransitionRejection(
               new Error(`Terminate ${t.name} to prepare ${actionName}`),
               t.initial
-            ).then(() => {}, () => this[actionName]());
+            ).then(
+              () => {},
+              () => this[actionName]()
+            );
           }
 
           this[TRANSITION_PROPERTY] = action.initial[this.state];
