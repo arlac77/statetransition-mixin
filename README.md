@@ -88,9 +88,11 @@ console.log('stopping == ${myObject.state}');
 -   [StateTransitionMixin](#statetransitionmixin)
     -   [Parameters](#parameters-1)
 -   [clazz](#clazz)
+-   [rejectUnlessResolvedWithin](#rejectunlessresolvedwithin)
+    -   [Parameters](#parameters-2)
 -   [defineActionMethods](#defineactionmethods)
     -   [Special handling of consequent transitions](#special-handling-of-consequent-transitions)
-    -   [Parameters](#parameters-2)
+    -   [Parameters](#parameters-3)
 
 ## STATE_PROPERTY
 
@@ -166,6 +168,18 @@ Extends a class to support state transtions
 ## clazz
 
 Generated mixin class with support of state transtions
+
+## rejectUnlessResolvedWithin
+
+Rejects promise when it ia not resolved within given timeout
+
+### Parameters
+
+-   `promise` **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** 
+-   `timeout` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** in miliseconds
+-   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** 
 
 ## defineActionMethods
 

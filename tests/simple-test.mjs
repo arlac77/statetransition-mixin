@@ -34,10 +34,8 @@ const actions = prepareActions({
   }
 });
 
-
 class StatefullClass extends StateTransitionMixin(
-  class BaseClass {
-  },
+  class BaseClass {},
   actions,
   "stopped"
 ) {
@@ -52,14 +50,14 @@ class StatefullClass extends StateTransitionMixin(
       if (this.shouldReject) return Promise.reject(new Error("always reject"));
       if (this.shouldThrow) throw new Error("always throw");
     }
-    return new Promise((f, r) => {
+    return new Promise((resolve, reject) => {
       setTimeout(() => {
         if (this.shouldReject) {
-          r(Promise.reject(new Error("always reject")));
+          reject(new Error("always reject"));
         }
         if (this.shouldThrow) throw new Error("always throw");
         else {
-          f(this);
+          resolve(this);
         }
       }, this.startTime);
     });
@@ -140,55 +138,30 @@ async function dynamicChecks(t, factory) {
 }
 
 async function dynamicFailureChecks(t, factory) {
-  const o = factory(0, false, false);
-
   // illegal transition
-  try {
+  await t.throwsAsync(async () => {
+    const o = factory(0, false, false);
     await o.swim();
-  } catch (error) {
-    t.truthy(error.message.match(/in stopped state/));
-  }
+  }, "Can't swim ES2015 class in stopped state");
 
   // handle timeout while starting
-  const o2 = factory(1000, false, false);
-  try {
-    await o2.start();
-  } catch (error) {
-    //t.is(o.state, 'failed_special');
-    t.truthy(error.message.match(/running not resolved within 200ms/));
-  }
-}
+  await t.throwsAsync(async () => {
+    const o = factory(1000, false, false);
+    await o.start();
+  }, "start:stopped->running request not resolved within 200ms");
 
-/*
-      checkFailure('failure (reject)', true, false);
-      checkFailure('failure (throw)', false, true);
+  // handle start while starting without timeout guard
+  await t.throwsAsync(async () => {
+    const o = factory(0, true, false);
+    await o.start();
+  }, "always reject");
 
-      function checkFailure(name, shouldReject, shoudThrow) {
-        it(`handle ${name} while starting without timeout guard`, done => {
-          const o = factory(0, true, false);
-
-          o.start().then(
-            f => {},
-            r => {
-              assert.equal(o.state, 'failed_special');
-              done();
-            }
-          );
-        });
-
-        it(`handle ${name} while starting with timeout guard`, done => {
-          const o = factory(10, true, false);
-
-          o.start().then(
-            f => {},
-            r => {
-              //console.log(`catch ${name} ${r}`);
-              assert.equal(o.state, 'failed_special');
-              done();
-            }
-          );
-        });
-      }
-    });
+  let o;
+  // while starting with timeout guard
+  await t.throwsAsync(async () => {
+    o = factory(10, true, false);
+    await o.start();
   });
-  */
+
+  t.is(o.state, "failed_special");
+}

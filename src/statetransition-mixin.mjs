@@ -184,27 +184,24 @@ export function StateTransitionMixin(superclass, actions, initialState) {
   return clazz;
 }
 
+/**
+ * Rejects promise when it ia not resolved within given timeout
+ * @param {Promise} promise
+ * @param {number} timeout in miliseconds
+ * @param {string} name
+ * @return {Promise}
+ */
 function rejectUnlessResolvedWithin(promise, timeout, name) {
-  if (timeout === 0) {
-    return promise;
-  }
+  if (timeout === 0) return promise;
 
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     const th = setTimeout(
-      () => reject(new Error(`${name} not resolved within ${timeout}ms`)),
+      () =>
+        reject(new Error(`${name} request not resolved within ${timeout}ms`)),
       timeout
     );
-
-    return promise.then(
-      value => {
-        clearTimeout(th);
-        resolve(value);
-      },
-      value => {
-        clearTimeout(th);
-        reject(value);
-      }
-    );
+    
+    promise.then(resolve, reject).finally(() => clearTimeout(th));
   });
 }
 
