@@ -176,7 +176,7 @@ export function StateTransitionMixin(superclass, actions, initialState) {
     }
   };
 
-  defineActionMethods(clazz.prototype, actions, true);
+  defineActionMethods(clazz.prototype, actions);
 
   return clazz;
 }

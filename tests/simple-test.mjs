@@ -52,10 +52,11 @@ class StatefullClass extends StateTransitionMixin(
     }
     return new Promise((resolve, reject) => {
       setTimeout(() => {
+        if (this.shouldThrow) throw new Error("always throw");
+
         if (this.shouldReject) {
           reject(new Error("always reject"));
         }
-        if (this.shouldThrow) throw new Error("always throw");
         else {
           resolve(this);
         }
@@ -144,20 +145,20 @@ async function dynamicFailureChecks(t, factory) {
     await o.swim();
   }, "Can't swim ES2015 class in stopped state");
 
-  // handle timeout while starting
+  // timeout while starting
   await t.throwsAsync(async () => {
     const o = factory(1000, false, false);
     await o.start();
   }, "start:stopped->running request not resolved within 200ms");
 
-  // handle start while starting without timeout guard
+  // reject while starting without timeout guard
   await t.throwsAsync(async () => {
     const o = factory(0, true, false);
     await o.start();
   }, "always reject");
 
   let o;
-  // while starting with timeout guard
+  // throw while starting with timeout guard
   await t.throwsAsync(async () => {
     o = factory(10, true, false);
     await o.start();
