@@ -1,10 +1,11 @@
 {
   "name": "statetransition-mixin",
   "version": "0.0.0-semantic-release",
-  "type": "module",
   "publishConfig": {
     "access": "public"
   },
+  "sideEffects": false,
+  "type": "module",
   "main": "src/statetransition-mixin.mjs",
   "module": "src/statetransition-mixin.mjs",
   "description": "mixin to declare state transition methods like start & stop",
@@ -61,6 +62,5 @@
     "repository": {
       "url": "https://github.com/arlac77/npm-package-template-esm-only.git"
     }
-  },
-  "sideEffects": false
+  }
 }
