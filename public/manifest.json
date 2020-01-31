@@ -1,0 +1,10 @@
+{
+  "name": "statetransition-mixin",
+  "description": "mixin to declare state transition methods like start & stop",
+  "icons": [
+    {
+      "src": "facicon.ico",
+      "sizes": "16x16"
+    }
+  ]
+}
