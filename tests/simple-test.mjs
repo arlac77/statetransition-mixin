@@ -3,7 +3,7 @@ import test from "ava";
 import {
   prepareActions,
   StateTransitionMixin
-} from "../src/statetransition-mixin";
+} from "../src/statetransition-mixin.mjs";
 
 const actions = prepareActions({
   start: {
@@ -143,19 +143,19 @@ async function dynamicFailureChecks(t, factory) {
   await t.throwsAsync(async () => {
     const o = factory(0, false, false);
     await o.swim();
-  }, "Can't swim ES2015 class in stopped state");
+  }, undefined, "Can't swim ES2015 class in stopped state");
 
   // timeout while starting
   await t.throwsAsync(async () => {
     const o = factory(1000, false, false);
     await o.start();
-  }, "start:stopped->running request not resolved within 200ms");
+  }, undefined, "start:stopped->running request not resolved within 200ms");
 
   // reject while starting without timeout guard
   await t.throwsAsync(async () => {
     const o = factory(0, true, false);
     await o.start();
-  }, "always reject");
+  }, undefined, "always reject");
 
   let o;
   // throw while starting with timeout guard
