@@ -75,12 +75,12 @@ console.log('stopping == ${myObject.state}');
 
 ### Table of Contents
 
--   [STATE_PROPERTY](#state_property)
--   [TRANSITION_PROPERTY](#transition_property)
--   [TRANSITION_PROMISE_PROPERTY](#transition_promise_property)
+-   [STATE](#state)
+-   [TRANSITION](#transition)
+-   [TRANSITION_PROMISE](#transition_promise)
 -   [Action](#action)
     -   [Properties](#properties)
--   [Transition](#transition)
+-   [Transition](#transition-1)
     -   [Properties](#properties-1)
 -   [prepareActions](#prepareactions)
     -   [Parameters](#parameters)
@@ -94,15 +94,15 @@ console.log('stopping == ${myObject.state}');
     -   [Special handling of consequent transitions](#special-handling-of-consequent-transitions)
     -   [Parameters](#parameters-3)
 
-## STATE_PROPERTY
+## STATE
 
 current state
 
-## TRANSITION_PROPERTY
+## TRANSITION
 
 ongoing transition
 
-## TRANSITION_PROMISE_PROPERTY
+## TRANSITION_PROMISE
 
 promise of the ongoing transition
 
