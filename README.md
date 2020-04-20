@@ -26,19 +26,19 @@ import { StateTransitionMixin, prepareActions } = from 'statetransition-mixin';
 
 const actions = prepareActions({
 start: { // declare start() and call _start() internally
-  stopped: {
+  stopped: { // can be called within stopped state
     target: "running",
     during: "starting",
     timeout: 10
   }
 },
 stop: { // declare stop() and call _stop() internally
-  running: {
+  running: {. // can be called when running
     target: "stopped",
     during: "stopping",
     timeout: 5
   },
-  starting: {
+  starting: { // or when starting
     target: "stopped",
     during: "stopping",
     timeout: 10
@@ -49,13 +49,11 @@ stop: { // declare stop() and call _stop() internally
 class BaseClass {}
 
 class StatefullClass extends StateTransitionMixin(BaseClass, actions, 'stopped') {
-async _start() { // will be called to go from stopped to running
-  return new Promise((f, r) => {
-    setTimeout(() => {
-      f(this)
-    }, 10);
-  });
-}
+
+  // will be called to go from stopped to running
+  async _start() {
+    return new Promise(resolve => setTimeout(() => resolve(), 10));
+  }
 }
 
 let myObject = new StatefullClass();

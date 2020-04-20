@@ -11,7 +11,8 @@
   "description": "mixin to declare state transition methods like start & stop",
   "keywords": [
     "state",
-    "mixin"
+    "mixin",
+    "transition"
   ],
   "contributors": [
     {
