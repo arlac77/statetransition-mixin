@@ -7,7 +7,6 @@
   "sideEffects": false,
   "type": "module",
   "main": "src/statetransition-mixin.mjs",
-  "module": "src/statetransition-mixin.mjs",
   "description": "mixin to declare state transition methods like start & stop",
   "keywords": [
     "state",
