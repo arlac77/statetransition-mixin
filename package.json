@@ -8,7 +8,8 @@
   "type": "module",
   "main": "src/statetransition-mixin.mjs",
   "exports": {
-    ".": "./src/statetransition-mixin.mjs"
+    ".": "./src/statetransition-mixin.mjs",
+    "./": "./"
   },
   "description": "mixin to declare state transition methods like start & stop",
   "keywords": [
