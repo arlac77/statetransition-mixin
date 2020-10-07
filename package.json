@@ -6,7 +6,7 @@
   },
   "sideEffects": false,
   "type": "module",
-  "main": "src/statetransition-mixin.mjs",
+  "main": "./src/statetransition-mixin.mjs",
   "exports": {
     ".": "src/statetransition-mixin.mjs"
   },
