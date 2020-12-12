@@ -5,8 +5,6 @@
     "access": "public"
   },
   "sideEffects": false,
-  "type": "module",
-  "main": "./src/statetransition-mixin.mjs",
   "exports": {
     ".": "./src/statetransition-mixin.mjs"
   },
