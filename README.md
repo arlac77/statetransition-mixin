@@ -3,7 +3,7 @@
 [![minified size](https://badgen.net/bundlephobia/min/statetransition-mixin)](https://bundlephobia.com/result?p=statetransition-mixin)
 [![downloads](http://img.shields.io/npm/dm/statetransition-mixin.svg?style=flat-square)](https://npmjs.org/package/statetransition-mixin)
 [![GitHub Issues](https://img.shields.io/github/issues/arlac77/statetransition-mixin.svg?style=flat-square)](https://github.com/arlac77/statetransition-mixin/issues)
-[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Farlac77%2Fstatetransition-mixin%2Fbadge&style=flat)](https://actions-badge.atrox.dev/arlac77/statetransition-mixin/goto)
+[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Farlac77%2Fstatetransition-mixin%2Fbadge\&style=flat)](https://actions-badge.atrox.dev/arlac77/statetransition-mixin/goto)
 [![Styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 [![Known Vulnerabilities](https://snyk.io/test/github/arlac77/statetransition-mixin/badge.svg)](https://snyk.io/test/github/arlac77/statetransition-mixin)
@@ -71,24 +71,24 @@ console.log('stopping == ${myObject.state}');
 
 ### Table of Contents
 
--   [STATE](#state)
--   [TRANSITION](#transition)
--   [TRANSITION_PROMISE](#transition_promise)
--   [Action](#action)
-    -   [Properties](#properties)
--   [Transition](#transition-1)
-    -   [Properties](#properties-1)
--   [prepareActions](#prepareactions)
-    -   [Parameters](#parameters)
-    -   [Examples](#examples)
--   [StateTransitionMixin](#statetransitionmixin)
-    -   [Parameters](#parameters-1)
--   [clazz](#clazz)
--   [rejectUnlessResolvedWithin](#rejectunlessresolvedwithin)
-    -   [Parameters](#parameters-2)
--   [defineActionMethods](#defineactionmethods)
-    -   [Special handling of consequent transitions](#special-handling-of-consequent-transitions)
-    -   [Parameters](#parameters-3)
+*   [STATE](#state)
+*   [TRANSITION](#transition)
+*   [TRANSITION_PROMISE](#transition_promise)
+*   [Action](#action)
+    *   [Properties](#properties)
+*   [Transition](#transition-1)
+    *   [Properties](#properties-1)
+*   [prepareActions](#prepareactions)
+    *   [Parameters](#parameters)
+    *   [Examples](#examples)
+*   [StateTransitionMixin](#statetransitionmixin)
+    *   [Parameters](#parameters-1)
+*   [clazz](#clazz)
+*   [rejectUnlessResolvedWithin](#rejectunlessresolvedwithin)
+    *   [Parameters](#parameters-2)
+*   [defineActionMethods](#defineactionmethods)
+    *   [Special handling of consequent transitions](#special-handling-of-consequent-transitions)
+    *   [Parameters](#parameters-3)
 
 ## STATE
 
@@ -108,8 +108,8 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 ### Properties
 
--   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** like 'start' or 'stop'
--   `transitions` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** possible transitions from the current state
+*   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** like 'start' or 'stop'
+*   `transitions` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** possible transitions from the current state
 
 ## Transition
 
@@ -117,11 +117,11 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 ### Properties
 
--   `timeout` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** in milliseconds the transtion is allowed to take
--   `initial` **[Transition](#transition)** 
--   `during` **[Transition](#transition)** 
--   `target` **[Transition](#transition)** 
--   `rejected` **[Transition](#transition)** 
+*   `timeout` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** in milliseconds the transtion is allowed to take
+*   `initial` **[Transition](#transition)** 
+*   `during` **[Transition](#transition)** 
+*   `target` **[Transition](#transition)** 
+*   `rejected` **[Transition](#transition)** 
 
 ## prepareActions
 
@@ -131,7 +131,7 @@ Compile actions and states
 
 ### Parameters
 
--   `as` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 
+*   `as` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 
 
 ### Examples
 
@@ -157,9 +157,9 @@ Extends a class to support state transtions
 
 ### Parameters
 
--   `superclass` **Class** 
--   `actions` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[Action](#action)>** 
--   `initialState` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** starting state
+*   `superclass` **Class** 
+*   `actions` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Action](#action)>** 
+*   `initialState` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** starting state
 
 ## clazz
 
@@ -171,9 +171,9 @@ Rejects promise when it ia not resolved within given timeout
 
 ### Parameters
 
--   `promise` **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** 
--   `timeout` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** in miliseconds
--   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+*   `promise` **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** 
+*   `timeout` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** in miliseconds
+*   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** 
 
@@ -182,7 +182,7 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 Defines methods to perform the state transitions.
 States are traversed in the following way:
 
- _current_ -> _during_ -> _final_
+*current* -> *during* -> *final*
 
 If the step is not in one of the transitions current
 states and also not already in the transitions final
@@ -202,10 +202,11 @@ There can only be one transition in place at a given point in time.
 
 ### Parameters
 
--   `object` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** target object where we define the methods
--   `actionsAndStates` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** object describing the state transitions
-    -   `actionsAndStates.0`  
-    -   `actionsAndStates.1`  
+*   `object` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** target object where we define the methods
+*   `actionsAndStates` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** object describing the state transitions
+
+    *   `actionsAndStates.0`  
+    *   `actionsAndStates.1`  
 
 Returns **void** 
 
