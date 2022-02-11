@@ -242,7 +242,7 @@ export function defineActionMethods(object, [actions, states]) {
     }
 
     Object.defineProperty(object, actionName, {
-      value: async function() {
+      value: async function(...args) {
         // target state already reached
         if (this.state === action.target) {
           return this;
@@ -260,17 +260,17 @@ export function defineActionMethods(object, [actions, states]) {
                 t.initial
               );
 
-            } catch (e) {}
+            } catch {}
 
             // then do what we originally wanted
-            return this[actionName]();
+            return this[actionName](...args);
           }
 
           this[TRANSITION] = action.initial[this.state];
           this.state = this[TRANSITION].during;
 
           this[TRANSITION_PROMISE] = rejectUnlessResolvedWithin(
-            this[privateActionName](),
+            this[privateActionName](...args),
             this.timeoutForTransition(this[TRANSITION]),
             this[TRANSITION].name
           ).then(

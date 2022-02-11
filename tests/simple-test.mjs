@@ -1,9 +1,6 @@
 import test from "ava";
 
-import {
-  prepareActions,
-  StateTransitionMixin
-} from "../src/statetransition-mixin.mjs";
+import { prepareActions, StateTransitionMixin } from "statetransition-mixin";
 
 const actions = prepareActions({
   start: {
@@ -45,7 +42,9 @@ class StatefullClass extends StateTransitionMixin(
     this.shouldReject = shouldReject;
     this.shouldThrow = shouldThrow;
   }
-  async _start() {
+  async _start(...args) {
+    this.args = args;
+
     if (this.startTime === 0) {
       if (this.shouldReject) return Promise.reject(new Error("always reject"));
       if (this.shouldThrow) throw new Error("always throw");
@@ -56,8 +55,7 @@ class StatefullClass extends StateTransitionMixin(
 
         if (this.shouldReject) {
           reject(new Error("always reject"));
-        }
-        else {
+        } else {
           resolve(this);
         }
       }, this.startTime);
@@ -107,7 +105,9 @@ function staticChecks(t, factory) {
 async function dynamicChecks(t, factory) {
   const o = factory(10, false);
 
-  await o.start();
+  await o.start(4711);
+
+  t.deepEqual(o.args, [4711]);
 
   t.is(o.state, "running");
 
@@ -140,22 +140,34 @@ async function dynamicChecks(t, factory) {
 
 async function dynamicFailureChecks(t, factory) {
   // illegal transition
-  await t.throwsAsync(async () => {
-    const o = factory(0, false, false);
-    await o.swim();
-  }, undefined, "Can't swim ES2015 class in stopped state");
+  await t.throwsAsync(
+    async () => {
+      const o = factory(0, false, false);
+      await o.swim();
+    },
+    undefined,
+    "Can't swim ES2015 class in stopped state"
+  );
 
   // timeout while starting
-  await t.throwsAsync(async () => {
-    const o = factory(1000, false, false);
-    await o.start();
-  }, undefined, "start:stopped->running request not resolved within 200ms");
+  await t.throwsAsync(
+    async () => {
+      const o = factory(1000, false, false);
+      await o.start();
+    },
+    undefined,
+    "start:stopped->running request not resolved within 200ms"
+  );
 
   // reject while starting without timeout guard
-  await t.throwsAsync(async () => {
-    const o = factory(0, true, false);
-    await o.start();
-  }, undefined, "always reject");
+  await t.throwsAsync(
+    async () => {
+      const o = factory(0, true, false);
+      await o.start();
+    },
+    undefined,
+    "always reject"
+  );
 
   let o;
   // throw while starting with timeout guard
