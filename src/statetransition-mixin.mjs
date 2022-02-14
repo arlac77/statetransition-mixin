@@ -151,6 +151,15 @@ export function StateTransitionMixin(superclass, actions, initialState) {
     }
 
     /**
+     * Called to get the name value for a given transition
+     * @param  {Transition} transition transtion to deliver timout value for
+     * @return {string} name for a transition
+     */
+    nameForTransition(transition) {
+      return transition.name;
+    }
+
+    /**
      * To be overwritten
      * Called when the state changes
      * @param {string} oldState previous state
@@ -271,7 +280,7 @@ export function defineActionMethods(object, [actions, states]) {
           this[TRANSITION_PROMISE] = rejectUnlessResolvedWithin(
             this[privateActionName](...args),
             this.timeoutForTransition(this[TRANSITION]),
-            this[TRANSITION].name
+            this.nameForTransition(this[TRANSITION])
           ).then(
             () => {
               if (!this[TRANSITION]) {
