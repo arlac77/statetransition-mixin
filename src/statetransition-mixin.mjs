@@ -77,7 +77,7 @@ export function prepareActions(as) {
           initialTransitions[initialState] = t;
           duringTransitions[t.during] = t;
           t.initial = initialState;
-          t.name = `${name}:${t.initial}->${t.target}`;
+          t.name = name;
           addState(t.initial, t);
           addState(t.during, t);
           addState(t.target);
@@ -156,7 +156,7 @@ export function StateTransitionMixin(superclass, actions, initialState) {
      * @return {string} name for a transition
      */
     nameForTransition(transition) {
-      return transition.name;
+      return `${transition.name}:${transition.initial}->${transition.target}`;
     }
 
     /**
