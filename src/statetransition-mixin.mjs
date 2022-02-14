@@ -188,7 +188,7 @@ export function StateTransitionMixin(superclass, actions, initialState) {
 }
 
 /**
- * Rejects promise when it ia not resolved within given timeout
+ * Rejects promise when it is not resolved within given timeout.
  * @param {Promise} promise
  * @param {number} timeout in miliseconds
  * @param {string} name
@@ -259,7 +259,6 @@ export function defineActionMethods(object, [actions, states]) {
                 new Error(`Terminate ${t.name} to prepare ${actionName}`),
                 t.initial
               );
-
             } catch {}
 
             // then do what we originally wanted
