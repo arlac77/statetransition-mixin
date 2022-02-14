@@ -167,7 +167,7 @@ Generated mixin class with support of state transtions
 
 ## rejectUnlessResolvedWithin
 
-Rejects promise when it ia not resolved within given timeout
+Rejects promise when it is not resolved within given timeout.
 
 ### Parameters
 
