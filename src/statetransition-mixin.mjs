@@ -242,6 +242,7 @@ function rejectUnlessResolvedWithin(promise, timeout, name) {
  */
 export function defineActionMethods(object, [actions, states]) {
   Object.entries(actions).forEach(([actionName, action]) => {
+    //console.log(action);
     const privateActionName = "_" + actionName;
 
     if (!object.hasOwnProperty(privateActionName)) {
@@ -258,6 +259,12 @@ export function defineActionMethods(object, [actions, states]) {
         }
 
         const t = this[TRANSITION];
+
+        if(t) {
+          if (action.during[t.during]) {
+            return this[TRANSITION_PROMISE];
+          }
+        }
 
         // normal start we are in the initial state of the action
         if (action.initial[this.state]) {
@@ -304,10 +311,6 @@ export function defineActionMethods(object, [actions, states]) {
           );
 
           return this[TRANSITION_PROMISE];
-        } else if (t) {
-          if (action.during[t.during]) {
-            return this[TRANSITION_PROMISE];
-          }
         }
 
         this.illegalStateTransition(action);
