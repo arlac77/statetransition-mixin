@@ -105,7 +105,9 @@ function staticChecks(t, factory) {
 async function dynamicChecks(t, factory) {
   const o = factory(10, false);
 
-  await o.start(4711);
+  o.start(4711);
+
+  await o.start();
 
   t.deepEqual(o.args, [4711]);
 
@@ -115,6 +117,7 @@ async function dynamicChecks(t, factory) {
   t.is(o._newState, "running");
 
   // can be started while running
+  await o.start();
   await o.start();
   t.is(o.state, "running");
 

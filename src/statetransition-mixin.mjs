@@ -260,8 +260,8 @@ export function defineActionMethods(object, [actions, states]) {
         // normal start we are in the initial state of the action
         if (action.initial[this.state]) {
           // some transition is ongoing
-          if (this[TRANSITION]) {
-            const t = this[TRANSITION];
+          const t = this[TRANSITION];
+          if (t) {
             try {
               // we terminate it silently ?
               this.stateTransitionRejection(
@@ -309,7 +309,7 @@ export function defineActionMethods(object, [actions, states]) {
           }
         }
 
-        return this.illegalStateTransition(action);
+        this.illegalStateTransition(action);
       }
     });
   });
