@@ -121,7 +121,7 @@ export function StateTransitionMixin(superclass, actions, initialState) {
      * @param {Action} action to be acted on
      * @throws always Error indicating that the given state transition is not allowed
      */
-    async illegalStateTransition(action) {
+     illegalStateTransition(action) {
       throw new Error(`Can't ${action.name} ${this} in ${this.state} state`);
     }
 
@@ -130,9 +130,9 @@ export function StateTransitionMixin(superclass, actions, initialState) {
      * Resets the transition
      * @param {any} rejected initiating error
      * @param {string} newState final state of error
-     * @return {Promise<any>} rejecting promise
+     * @throws always
      */
-    async stateTransitionRejection(rejected, newState) {
+     stateTransitionRejection(rejected, newState) {
       this.state = newState;
       this[TRANSITION_PROMISE] = undefined;
       this[TRANSITION] = undefined;
@@ -264,7 +264,7 @@ export function defineActionMethods(object, [actions, states]) {
             const t = this[TRANSITION];
             try {
               // we terminate it silently ?
-              await this.stateTransitionRejection(
+              this.stateTransitionRejection(
                 new Error(`Terminate ${t.name} to prepare ${actionName}`),
                 t.initial
               );
@@ -287,11 +287,6 @@ export function defineActionMethods(object, [actions, states]) {
                 // here we end if we canceled a transtion
                 // need some better ideas to communicate
                 return this;
-                /*
-              return this.stateTransitionRejection(new Error(
-                `Should never happen: ${this.state} and no transition coming from ${actionName}`
-              ), 'failed');
-              */
               }
 
               this.state = this[TRANSITION].target;
