@@ -22,10 +22,10 @@ const TRANSITION_PROMISE = Symbol("transitionPromise");
 /**
  * @typedef {Object} Transition
  * @property {number} timeout in milliseconds the transtion is allowed to take
- * @property {Transition} initial
- * @property {Transition} during
- * @property {Transition} target
- * @property {Transition} rejected
+ * @property {Transition} initial to begin with
+ * @property {Transition} during while we are trying to reach the target
+ * @property {Transition} target 
+ * @property {Transition} rejected when soemthing goes wrong
  */
 
 /**
@@ -121,7 +121,7 @@ export function StateTransitionMixin(superclass, actions, initialState) {
      * @param {Action} action to be acted on
      * @throws always Error indicating that the given state transition is not allowed
      */
-     illegalStateTransition(action) {
+    illegalStateTransition(action) {
       throw new Error(`Can't ${action.name} ${this} in ${this.state} state`);
     }
 
@@ -132,7 +132,7 @@ export function StateTransitionMixin(superclass, actions, initialState) {
      * @param {string} newState final state of error
      * @throws always
      */
-     stateTransitionRejection(rejected, newState) {
+    stateTransitionRejection(rejected, newState) {
       this.state = newState;
       this[TRANSITION_PROMISE] = undefined;
       this[TRANSITION] = undefined;
@@ -251,16 +251,17 @@ export function defineActionMethods(object, [actions, states]) {
     }
 
     Object.defineProperty(object, actionName, {
-      value: async function(...args) {
+      value: async function (...args) {
         // target state already reached
         if (this.state === action.target) {
           return this;
         }
 
+        const t = this[TRANSITION];
+
         // normal start we are in the initial state of the action
         if (action.initial[this.state]) {
           // some transition is ongoing
-          const t = this[TRANSITION];
           if (t) {
             try {
               // we terminate it silently ?
@@ -303,8 +304,8 @@ export function defineActionMethods(object, [actions, states]) {
           );
 
           return this[TRANSITION_PROMISE];
-        } else if (this[TRANSITION]) {
-          if (action.during[this[TRANSITION].during]) {
+        } else if (t) {
+          if (action.during[t.during]) {
             return this[TRANSITION_PROMISE];
           }
         }
