@@ -118,10 +118,10 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 ### Properties
 
 *   `timeout` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** in milliseconds the transtion is allowed to take
-*   `initial` **[Transition](#transition)** 
-*   `during` **[Transition](#transition)** 
+*   `initial` **[Transition](#transition)** to begin with
+*   `during` **[Transition](#transition)** while we are trying to reach the target
 *   `target` **[Transition](#transition)** 
-*   `rejected` **[Transition](#transition)** 
+*   `rejected` **[Transition](#transition)** when soemthing goes wrong
 
 ## prepareActions
 
