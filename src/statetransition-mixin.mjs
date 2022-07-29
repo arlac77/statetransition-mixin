@@ -162,6 +162,7 @@ export function StateTransitionMixin(superclass, actions, initialState) {
     /**
      * To be overwritten
      * Called when the state changes
+     * @param {Object} origin which object changed state
      * @param {string} oldState previous state
      * @param {string} newState new state
      * @return {void}
@@ -185,7 +186,7 @@ export function StateTransitionMixin(superclass, actions, initialState) {
      */
     set state(newState) {
       if (newState !== this[STATE]) {
-        this.stateChanged(this[STATE], newState);
+        this.stateChanged(this, this[STATE], newState);
         this[STATE] = newState;
       }
     }

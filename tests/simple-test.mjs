@@ -68,7 +68,7 @@ class StatefullClass extends StateTransitionMixin(
     return "ES2015 class";
   }
 
-  stateChanged(oldState, newState) {
+  stateChanged(origin, oldState, newState) {
     this._newState = newState;
   }
 }
