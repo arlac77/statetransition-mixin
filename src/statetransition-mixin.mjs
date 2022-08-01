@@ -185,9 +185,10 @@ export function StateTransitionMixin(superclass, actions, initialState) {
      * @return {void}
      */
     set state(newState) {
-      if (newState !== this[STATE]) {
-        this.stateChanged(this, this[STATE], newState);
+      const oldState = this[STATE];
+      if (newState !== oldState) {
         this[STATE] = newState;
+        this.stateChanged(this, oldState, newState);
       }
     }
   };
