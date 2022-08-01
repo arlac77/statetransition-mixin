@@ -101,14 +101,14 @@ export function prepareActions(as) {
 }
 
 /**
- * Extends a class to support state transtions
+ * Extends a class to support state transtions.
  * @param {Class} superclass
  * @param {Action[]} actions
  * @param {string} initialState starting state
  */
 export function StateTransitionMixin(superclass, actions, initialState) {
   /**
-   * Generated mixin class with support of state transtions
+   * Generated mixin class with support of state transtions.
    */
   const clazz = class StateTransitionMixin extends superclass {
     constructor(...args) {
@@ -117,7 +117,7 @@ export function StateTransitionMixin(superclass, actions, initialState) {
     }
 
     /**
-     * Called when state transition action is not allowed
+     * Called when state transition action is not allowed.
      * @param {Action} action to be acted on
      * @throws always Error indicating that the given state transition is not allowed
      */
@@ -141,7 +141,7 @@ export function StateTransitionMixin(superclass, actions, initialState) {
     }
 
     /**
-     * Called to get the timeout value for a given transition
+     * Called to get the timeout value for a given transition.
      * By default we deliver the timeout property of the transition.
      * @param  {Transition} transition transtion to deliver timout value for
      * @return {number} timeout for the transition in milliseconds
@@ -151,7 +151,7 @@ export function StateTransitionMixin(superclass, actions, initialState) {
     }
 
     /**
-     * Called to get the name value for a given transition
+     * Called to get the name value for a given transition.
      * @param  {Transition} transition transtion to deliver timout value for
      * @return {string} name for a transition
      */
@@ -161,7 +161,7 @@ export function StateTransitionMixin(superclass, actions, initialState) {
 
     /**
      * To be overwritten
-     * Called when the state changes
+     * Called when the state has changed.
      * @param {Object} origin which object changed state
      * @param {string} oldState previous state
      * @param {string} newState new state
