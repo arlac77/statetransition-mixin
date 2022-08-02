@@ -153,7 +153,7 @@ Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Gl
 
 ## StateTransitionMixin
 
-Extends a class to support state transtions
+Extends a class to support state transtions.
 
 ### Parameters
 
@@ -163,7 +163,7 @@ Extends a class to support state transtions
 
 ## clazz
 
-Generated mixin class with support of state transtions
+Generated mixin class with support of state transtions.
 
 ## rejectUnlessResolvedWithin
 
