@@ -73,7 +73,7 @@ console.log('stopping == ${myObject.state}');
 
 *   [STATE](#state)
 *   [TRANSITION](#transition)
-*   [TRANSITION_PROMISE](#transition_promise)
+*   [TRANSITION\_PROMISE](#transition_promise)
 *   [Action](#action)
     *   [Properties](#properties)
 *   [Transition](#transition-1)
@@ -98,7 +98,7 @@ current state
 
 ongoing transition
 
-## TRANSITION_PROMISE
+## TRANSITION\_PROMISE
 
 promise of the ongoing transition
 
@@ -120,7 +120,7 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 *   `timeout` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** in milliseconds the transtion is allowed to take
 *   `initial` **[Transition](#transition)** to begin with
 *   `during` **[Transition](#transition)** while we are trying to reach the target
-*   `target` **[Transition](#transition)** 
+*   `target` **[Transition](#transition)**&#x20;
 *   `rejected` **[Transition](#transition)** when soemthing goes wrong
 
 ## prepareActions
@@ -131,7 +131,7 @@ Compile actions and states
 
 ### Parameters
 
-*   `as` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 
+*   `as` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**&#x20;
 
 ### Examples
 
@@ -149,7 +149,7 @@ prepareActions({
  }}});
 ```
 
-Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)** 
+Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)**&#x20;
 
 ## StateTransitionMixin
 
@@ -157,8 +157,8 @@ Extends a class to support state transtions.
 
 ### Parameters
 
-*   `superclass` **Class** 
-*   `actions` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Action](#action)>** 
+*   `superclass` **Class**&#x20;
+*   `actions` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Action](#action)>**&#x20;
 *   `initialState` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** starting state
 
 ## clazz
@@ -171,11 +171,11 @@ Rejects promise when it is not resolved within given timeout.
 
 ### Parameters
 
-*   `promise` **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** 
+*   `promise` **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)**&#x20;
 *   `timeout` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** in miliseconds
-*   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+*   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** 
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)**&#x20;
 
 ## defineActionMethods
 
@@ -205,10 +205,10 @@ There can only be one transition in place at a given point in time.
 *   `object` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** target object where we define the methods
 *   `actionsAndStates` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** object describing the state transitions
 
-    *   `actionsAndStates.0`  
-    *   `actionsAndStates.1`  
+    *   `actionsAndStates.0` &#x20;
+    *   `actionsAndStates.1` &#x20;
 
-Returns **void** 
+Returns **void**&#x20;
 
 # install
 
