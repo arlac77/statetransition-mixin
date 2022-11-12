@@ -29,15 +29,15 @@ const TRANSITION_PROMISE = Symbol("transitionPromise");
  * Compile actions and states
  * @example
  * prepareActions({
- * 'start':{
- *  'stopped': {
- *    'target': 'running',
- *    'during': 'starting'
+ * start:{
+ *  stopped: {
+ *    target: 'running',
+ *    during: 'starting'
  * }},
- * 'stop': {
- *  'running': {
- *    'target': 'stopped',
- *    'during': 'stopping'
+ * stop: {
+ *  running: {
+ *    target: 'stopped',
+ *    during: 'stopping'
  *  }}});
  * @param {Object} as
  * @return {Array}
