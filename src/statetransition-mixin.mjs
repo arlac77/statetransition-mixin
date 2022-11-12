@@ -1,7 +1,3 @@
-/**
- * current state
- */
-const STATE = Symbol("state");
 
 /**
  * ongoing transition
@@ -111,10 +107,8 @@ export function StateTransitionMixin(superclass, actions, initialState) {
    * Generated mixin class with support of state transtions.
    */
   const clazz = class StateTransitionMixin extends superclass {
-    constructor(...args) {
-      super(...args);
-      this[STATE] = initialState;
-    }
+
+    #state = initialState;
 
     /**
      * Called when state transition action is not allowed.
@@ -174,7 +168,7 @@ export function StateTransitionMixin(superclass, actions, initialState) {
      * return {string} current state
      */
     get state() {
-      return this[STATE];
+      return this.#state;
     }
 
     /**
@@ -185,9 +179,9 @@ export function StateTransitionMixin(superclass, actions, initialState) {
      * @return {void}
      */
     set state(newState) {
-      const oldState = this[STATE];
+      const oldState = this.#state;
       if (newState !== oldState) {
-        this[STATE] = newState;
+        this.#state = newState;
         this.stateChanged(this, oldState, newState);
       }
     }
@@ -308,7 +302,7 @@ export function defineActionMethods(object, [actions, states]) {
             rejected =>
               this.stateTransitionRejection(
                 rejected,
-                this[TRANSITION] && this[TRANSITION].rejected
+                this[TRANSITION]?.rejected
               )
           );
 
