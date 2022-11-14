@@ -71,7 +71,6 @@ console.log('stopping == ${myObject.state}');
 
 ### Table of Contents
 
-*   [STATE](#state)
 *   [TRANSITION](#transition)
 *   [TRANSITION\_PROMISE](#transition_promise)
 *   [Action](#action)
@@ -89,10 +88,6 @@ console.log('stopping == ${myObject.state}');
 *   [defineActionMethods](#defineactionmethods)
     *   [Special handling of consequent transitions](#special-handling-of-consequent-transitions)
     *   [Parameters](#parameters-3)
-
-## STATE
-
-current state
 
 ## TRANSITION
 
@@ -137,15 +132,15 @@ Compile actions and states
 
 ```javascript
 prepareActions({
-'start':{
- 'stopped': {
-   'target': 'running',
-   'during': 'starting'
+start:{
+ stopped: {
+   target: 'running',
+   during: 'starting'
 }},
-'stop': {
- 'running': {
-   'target': 'stopped',
-   'during': 'stopping'
+stop: {
+ running: {
+   target: 'stopped',
+   during: 'stopping'
  }}});
 ```
 
