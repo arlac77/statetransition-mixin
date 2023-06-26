@@ -1,4 +1,3 @@
-
 /**
  * ongoing transition
  */
@@ -20,7 +19,7 @@ const TRANSITION_PROMISE = Symbol("transitionPromise");
  * @property {number} timeout in milliseconds the transtion is allowed to take
  * @property {Transition} initial to begin with
  * @property {Transition} during while we are trying to reach the target
- * @property {Transition} target 
+ * @property {Transition} target
  * @property {Transition} rejected when soemthing goes wrong
  */
 
@@ -107,7 +106,6 @@ export function StateTransitionMixin(superclass, actions, initialState) {
    * Generated mixin class with support of state transtions.
    */
   const clazz = class StateTransitionMixin extends superclass {
-
     #state = initialState;
 
     /**
@@ -238,7 +236,6 @@ function rejectUnlessResolvedWithin(promise, timeout, name) {
  */
 export function defineActionMethods(object, [actions, states]) {
   Object.entries(actions).forEach(([actionName, action]) => {
-    //console.log(action);
     const privateActionName = "_" + actionName;
 
     if (!object.hasOwnProperty(privateActionName)) {
@@ -256,10 +253,8 @@ export function defineActionMethods(object, [actions, states]) {
 
         const t = this[TRANSITION];
 
-        if(t) {
-          if (action.during[t.during]) {
-            return this[TRANSITION_PROMISE];
-          }
+        if (t && action.during[t.during]) {
+          return this[TRANSITION_PROMISE];
         }
 
         // normal start we are in the initial state of the action
@@ -294,8 +289,8 @@ export function defineActionMethods(object, [actions, states]) {
               }
 
               this.state = this[TRANSITION].target;
-              this[TRANSITION_PROMISE] = undefined;
-              this[TRANSITION] = undefined;
+              delete this[TRANSITION_PROMISE];
+              delete this[TRANSITION];
 
               return this;
             },
