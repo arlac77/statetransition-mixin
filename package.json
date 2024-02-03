@@ -42,7 +42,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/arlac77/statetransition-mixin"
+    "url": "git+https://github.com/arlac77/statetransition-mixin.git"
   },
   "bugs": {
     "url": "https://github.com/arlac77/statetransition-mixin/issues"
