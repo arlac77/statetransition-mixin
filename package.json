@@ -2,7 +2,8 @@
   "name": "statetransition-mixin",
   "version": "0.0.0-semantic-release",
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "provenance": true
   },
   "exports": {
     ".": "./src/statetransition-mixin.mjs"
