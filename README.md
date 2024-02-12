@@ -114,6 +114,7 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 ### Properties
 
 *   `timeout` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** in milliseconds the transtion is allowed to take
+*   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 *   `initial` **[Transition](#transition)** to begin with
 *   `during` **[Transition](#transition)** while we are trying to reach the target
 *   `target` **[Transition](#transition)**&#x20;
@@ -153,7 +154,7 @@ Extends a class to support state transtions.
 
 ### Parameters
 
-*   `superclass` **Class**&#x20;
+*   `superclass` &#x20;
 *   `actions` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Action](#action)>**&#x20;
 *   `initialState` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** starting state
 
