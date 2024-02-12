@@ -17,6 +17,7 @@ const TRANSITION_PROMISE = Symbol("transitionPromise");
 /**
  * @typedef {Object} Transition
  * @property {number} timeout in milliseconds the transtion is allowed to take
+ * @property {string} name
  * @property {Transition} initial to begin with
  * @property {Transition} during while we are trying to reach the target
  * @property {Transition} target
@@ -97,7 +98,7 @@ export function prepareActions(as) {
 
 /**
  * Extends a class to support state transtions.
- * @param {Class} superclass
+ * @param {new() => superclass} superclass
  * @param {Action[]} actions
  * @param {string} initialState starting state
  */
@@ -159,7 +160,7 @@ export function StateTransitionMixin(superclass, actions, initialState) {
      * @param {string} newState new state
      * @return {void}
      */
-    stateChanged() {}
+    stateChanged(origin,oldState,newState) {}
 
     /**
      * Delivers current state
