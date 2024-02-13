@@ -8,8 +8,8 @@
   "types": "./types/statetransition-mixin.d.mts",
   "exports": {
     ".": {
-      "types": "./types/statetransition-mixin.d.mts",
-      "default": "./src/statetransition-mixin.mjs"
+      "default": "./src/statetransition-mixin.mjs",
+      "types": "./types/statetransition-mixin.d.mts"
     }
   },
   "description": "mixin to declare state transition methods like start & stop",
