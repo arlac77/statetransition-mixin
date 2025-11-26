@@ -56,7 +56,7 @@
   "bugs": {
     "url": "https://github.com/arlac77/statetransition-mixin/issues"
   },
-  "homepage": "https://github.com/arlac77/statetransition-mixin#readme",
+  "homepage": "",
   "template": {
     "inheritFrom": [
       "arlac77/template-arlac77-github",
